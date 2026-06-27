@@ -33,24 +33,52 @@ enum Track {
   RESEARCHER
 }
 
-model Profile {
-  id             String         @id @default(cuid())
-  clerkUserId    String         @unique
-  email          String         @unique
-  fullName       String?
-  track          Track?
-  level          AcademicLevel?
-  school         String?
-  targetExam     ExamType?
-  courseOfStudy  String?
-  researchArea   String?
-  researchStage  String?
-  onboarded      Boolean        @default(false)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+enum CareerCategory {
+  MEDICINE
+  ENGINEERING
+  DATA_SCIENCE
+  LAW
+  BUSINESS
+  ARTS_HUMANITIES
+  EDUCATION
+  TECHNOLOGY
+}
 
-  cbtSessions   CbtSession[]
-  coachSessions CoachSession[]
+enum OpportunityType {
+  SCHOLARSHIP
+  FELLOWSHIP
+  COMPETITION
+  INTERNSHIP
+}
+
+enum ApplicationStatus {
+  RESEARCHING
+  APPLYING
+  SUBMITTED
+  ADMITTED
+  REJECTED
+}
+
+model Profile {
+  id            String         @id @default(cuid())
+  clerkUserId   String         @unique
+  email         String         @unique
+  fullName      String?
+  track         Track?
+  level         AcademicLevel?
+  school        String?
+  targetExam    ExamType?
+  courseOfStudy String?
+  researchArea  String?
+  researchStage String?
+  onboarded     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  cbtSessions            CbtSession[]
+  coachSessions          CoachSession[]
+  careerResults          CareerResult[]
+  universityApplications UniversityApplication[]
 
   @@map("profiles")
 }
@@ -98,4 +126,62 @@ model CoachSession {
 
   @@index([profileId])
   @@map("coach_sessions")
+}
+
+model CareerResult {
+  id         String   @id @default(cuid())
+  profileId  String
+  profile    Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  answers    Json
+  topMatches Json
+  createdAt  DateTime @default(now())
+
+  @@index([profileId])
+  @@map("career_results")
+}
+
+model Opportunity {
+  id          String          @id @default(cuid())
+  title       String
+  provider    String
+  type        OpportunityType
+  category    CareerCategory?
+  description String
+  eligibility String?
+  deadline    DateTime?
+  link        String
+  level       AcademicLevel?
+  createdAt   DateTime        @default(now())
+
+  @@index([type])
+  @@map("opportunities")
+}
+
+model UniversityProgram {
+  id           String   @id @default(cuid())
+  name         String
+  country      String
+  program      String
+  requirements String?
+  link         String?
+  createdAt    DateTime @default(now())
+
+  @@map("university_programs")
+}
+
+model UniversityApplication {
+  id             String            @id @default(cuid())
+  profileId      String
+  profile        Profile           @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  universityName String
+  country        String
+  program        String
+  status         ApplicationStatus @default(RESEARCHING)
+  deadline       DateTime?
+  notes          String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([profileId])
+  @@map("university_applications")
 }
