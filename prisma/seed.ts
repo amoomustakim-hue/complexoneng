@@ -258,6 +258,111 @@ const universityPrograms = [
   },
 ];
 
+const inventoryItems = [
+  {
+    name: "Zoology Made Easy",
+    category: "TEXTBOOK" as const,
+    price: 3500,
+    stock: 12,
+    condition: "Good",
+    format: "Physical",
+    description: "Comprehensive zoology textbook for JAMB and university first-year students.",
+  },
+  {
+    name: "Campbell Biology 9th Edition",
+    category: "TEXTBOOK" as const,
+    price: 6000,
+    stock: 5,
+    condition: "Like new",
+    format: "Physical",
+    description: "Standard reference biology textbook used across Nigerian universities.",
+  },
+  {
+    name: "UNILAG Post-UTME Past Questions (2019-2023)",
+    category: "ACADEMIC_MATERIAL" as const,
+    price: 1500,
+    stock: 999,
+    condition: null,
+    format: "Digital",
+    description: "Five-year pack of UNILAG Post-UTME past questions, delivered as PDF.",
+  },
+  {
+    name: "JAMB CBT Practice Pack (9-year)",
+    category: "ACADEMIC_MATERIAL" as const,
+    price: 2500,
+    stock: 999,
+    condition: null,
+    format: "Digital",
+    description: "Nine-year JAMB past question pack with answers and explanations.",
+  },
+  {
+    name: "HP Stream 14",
+    category: "LAPTOP" as const,
+    price: 75000,
+    stock: 3,
+    condition: "Refurbished, good",
+    format: "Physical",
+    description: "Lightweight laptop suitable for browsing, typing, and light coursework.",
+  },
+  {
+    name: "Lenovo IdeaPad 1",
+    category: "LAPTOP" as const,
+    price: 92000,
+    stock: 4,
+    condition: "New",
+    format: "Physical",
+    description: "Entry-level laptop for students, new and sealed.",
+  },
+  {
+    name: "Acer Aspire 3",
+    category: "LAPTOP" as const,
+    price: 88000,
+    stock: 2,
+    condition: "Refurbished, excellent",
+    format: "Physical",
+    description: "Reliable mid-range laptop, great for coding and coursework.",
+  },
+];
+
+const hostels = [
+  {
+    name: "Akoka Student Lodge",
+    type: "PARTNER" as const,
+    area: "Akoka / Yaba (near UNILAG)",
+    pricePerYear: 180000,
+    deposit: 30000,
+    roomsAvailable: 3,
+    amenities: ["Water", "24hr generator", "Security", "WiFi"],
+  },
+  {
+    name: "Yaba Comfort Rooms",
+    type: "PARTNER" as const,
+    area: "Akoka / Yaba (near UNILAG)",
+    pricePerYear: 150000,
+    deposit: 25000,
+    roomsAvailable: 5,
+    amenities: ["Water", "Security"],
+  },
+  {
+    name: "ComplexOne Halls",
+    type: "OWNED" as const,
+    area: "Akoka / Yaba (near UNILAG)",
+    pricePerYear: 220000,
+    deposit: 44000,
+    roomsAvailable: 4,
+    amenities: ["24hr water", "Generator", "Security", "WiFi", "Study room"],
+  },
+  {
+    name: "Surulere Student Annex",
+    type: "PARTNER" as const,
+    area: "Surulere",
+    pricePerYear: 160000,
+    deposit: 30000,
+    roomsAvailable: 2,
+    amenities: ["Water", "Security", "WiFi"],
+  },
+];
+
 async function main() {
   console.log(`Seeding ${questions.length} questions...`);
   await prisma.question.deleteMany();
@@ -275,6 +380,18 @@ async function main() {
   await prisma.universityProgram.deleteMany();
   for (const u of universityPrograms) {
     await prisma.universityProgram.create({ data: u });
+  }
+
+  console.log(`Seeding ${inventoryItems.length} inventory items...`);
+  await prisma.inventoryItem.deleteMany();
+  for (const i of inventoryItems) {
+    await prisma.inventoryItem.create({ data: i });
+  }
+
+  console.log(`Seeding ${hostels.length} hostels...`);
+  await prisma.hostel.deleteMany();
+  for (const h of hostels) {
+    await prisma.hostel.create({ data: h });
   }
 
   console.log("Done.");
