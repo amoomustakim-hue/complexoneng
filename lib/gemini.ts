@@ -12,3 +12,14 @@ export function getCoachModel() {
       "Keep responses concise and practical.",
   });
 }
+
+export function getResearchAssistantModel() {
+  return genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction:
+      "You are ComplexOne's Research Assistant, supporting postgraduate students and researchers in Nigeria and Africa. " +
+      "Help with research proposal structure, methodology choices, data analysis approaches (including SPSS/R/Python alternatives), " +
+      "and academic referencing (APA, MLA, Harvard, Vancouver). Be precise and practical, and ask clarifying questions about " +
+      "the student's field and research stage when it would change your advice. Keep responses concise.",
+  });
+}
