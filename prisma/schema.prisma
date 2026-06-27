@@ -59,6 +59,12 @@ enum ApplicationStatus {
   REJECTED
 }
 
+enum ResearchRequestStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+}
+
 model Profile {
   id            String         @id @default(cuid())
   clerkUserId   String         @unique
@@ -79,6 +85,8 @@ model Profile {
   coachSessions          CoachSession[]
   careerResults          CareerResult[]
   universityApplications UniversityApplication[]
+  researchRequests       ResearchRequest[]
+  researchOffers         ResearchOffer[]
 
   @@map("profiles")
 }
@@ -184,4 +192,36 @@ model UniversityApplication {
 
   @@index([profileId])
   @@map("university_applications")
+}
+
+model ResearchRequest {
+  id           String                @id @default(cuid())
+  profileId    String
+  profile      Profile               @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title        String
+  description  String
+  skillsNeeded String?
+  budget       String?
+  status       ResearchRequestStatus @default(OPEN)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  offers ResearchOffer[]
+
+  @@index([profileId])
+  @@map("research_requests")
+}
+
+model ResearchOffer {
+  id        String          @id @default(cuid())
+  requestId String
+  request   ResearchRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  profileId String
+  profile   Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  message   String
+  createdAt DateTime        @default(now())
+
+  @@index([requestId])
+  @@index([profileId])
+  @@map("research_offers")
 }
