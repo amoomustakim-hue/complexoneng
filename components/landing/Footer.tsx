@@ -1,3 +1,4 @@
+import { Search } from "lucide-react";
 import { Twitter, Instagram, Linkedin } from "@/components/landing/social-icons";
 
 const platformLinks = [
@@ -14,29 +15,34 @@ const companyLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-teal pt-16 pb-8 border-t border-cream/20">
-      <div className="max-w-7xl mx-auto px-6">
+    <footer className="relative bg-teal-deep pt-16 pb-8 border-t border-white/10 overflow-hidden">
+      <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-lime/10 blur-3xl" />
+
+      <div className="relative max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:justify-between gap-12">
           <div>
-            <p className="font-bold text-cream text-xl">ComplexOne</p>
-            <p className="text-sm text-cream opacity-60 mt-1">
-              One platform. Every student journey.
-            </p>
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-lime text-teal-deep shadow-skeu">
+                <Search size={16} strokeWidth={2.5} />
+              </span>
+              <p className="font-bold text-cream text-xl">ComplexOne</p>
+            </div>
+            <p className="text-sm text-cream/60 mt-2">One platform. Every student journey.</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-12 text-sm text-cream opacity-70">
+          <div className="grid grid-cols-2 gap-12 text-sm text-cream/70">
             <div className="flex flex-col gap-2">
-              <p className="font-semibold opacity-100">Platform</p>
+              <p className="font-semibold text-cream">Platform</p>
               {platformLinks.map((link) => (
-                <a key={link.label} href={link.href} className="hover:opacity-80">
+                <a key={link.label} href={link.href} className="hover:text-lime transition-colors">
                   {link.label}
                 </a>
               ))}
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-semibold opacity-100">Company</p>
+              <p className="font-semibold text-cream">Company</p>
               {companyLinks.map((link) => (
-                <a key={link.label} href={link.href} className="hover:opacity-80">
+                <a key={link.label} href={link.href} className="hover:text-lime transition-colors">
                   {link.label}
                 </a>
               ))}
@@ -44,19 +50,31 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-cream/20 my-8" />
+        <div className="border-t border-white/10 my-8" />
 
-        <div className="flex flex-col sm:flex-row justify-between gap-4 text-xs text-cream opacity-50">
+        <div className="flex flex-col sm:flex-row justify-between gap-4 text-xs text-cream/50">
           <p>© 2026 ComplexOne — CODEDDEVS TECHNOLOGY LTD · Lagos, Nigeria</p>
-          <div className="flex items-center gap-4 opacity-60">
-            <a href="#" aria-label="Twitter">
-              <Twitter size={16} />
+          <div className="flex items-center gap-4">
+            <a
+              href="#"
+              aria-label="Twitter"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 hover:text-lime transition"
+            >
+              <Twitter size={14} />
             </a>
-            <a href="#" aria-label="Instagram">
-              <Instagram size={16} />
+            <a
+              href="#"
+              aria-label="Instagram"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 hover:text-lime transition"
+            >
+              <Instagram size={14} />
             </a>
-            <a href="#" aria-label="LinkedIn">
-              <Linkedin size={16} />
+            <a
+              href="#"
+              aria-label="LinkedIn"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 hover:text-lime transition"
+            >
+              <Linkedin size={14} />
             </a>
           </div>
         </div>
