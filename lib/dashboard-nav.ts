@@ -15,7 +15,7 @@ export const NAV_MODULES: Record<NavModuleKey, { href: string; label: string; ic
 const ORDER_BY_TRACK: Record<string, NavModuleKey[]> = {
   HIGH_SCHOOL: ["academic", "career", "economy", "community", "research"],
   UNDERGRAD: ["academic", "career", "research", "economy", "community"],
-  RESEARCHER: ["research", "community", "career", "economy", "academic"],
+  RESEARCHER: ["research", "community", "career", "economy"],
 };
 
 export function getNavOrder(track?: Track): NavModuleKey[] {
