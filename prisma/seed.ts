@@ -122,11 +122,161 @@ const questions = [
   },
 ];
 
+const opportunities = [
+  {
+    title: "MTN Foundation STEM Scholarship",
+    provider: "MTN Foundation",
+    type: "SCHOLARSHIP" as const,
+    category: "TECHNOLOGY" as const,
+    description: "Tuition support for undergraduates studying STEM fields in Nigerian universities.",
+    eligibility: "Nigerian undergraduate, STEM discipline, CGPA 3.5+",
+    deadline: new Date("2026-09-30"),
+    link: "https://www.mtnonline.com/foundation",
+    level: null,
+  },
+  {
+    title: "Chevening Scholarships",
+    provider: "UK Government",
+    type: "SCHOLARSHIP" as const,
+    category: null,
+    description: "Fully-funded master's scholarships in the UK for future leaders.",
+    eligibility: "2+ years work experience, undergraduate degree",
+    deadline: new Date("2026-11-03"),
+    link: "https://www.chevening.org",
+    level: "POSTGRAD" as const,
+  },
+  {
+    title: "Mastercard Foundation Scholars Program",
+    provider: "Mastercard Foundation",
+    type: "SCHOLARSHIP" as const,
+    category: null,
+    description: "Full scholarships for academically talented but economically disadvantaged students.",
+    eligibility: "Financial need, strong academic record",
+    deadline: new Date("2026-08-15"),
+    link: "https://mastercardfdn.org",
+    level: null,
+  },
+  {
+    title: "NNPC/Total National Merit Scholarship",
+    provider: "NNPC/TotalEnergies",
+    type: "SCHOLARSHIP" as const,
+    category: "ENGINEERING" as const,
+    description: "Annual scholarship for Nigerian undergraduates in selected fields.",
+    eligibility: "Nigerian undergraduate, JAMB score 200+",
+    deadline: new Date("2026-10-01"),
+    link: "https://totalenergies.com.ng",
+    level: null,
+  },
+  {
+    title: "Google Africa Developer Scholarship",
+    provider: "Google",
+    type: "FELLOWSHIP" as const,
+    category: "TECHNOLOGY" as const,
+    description: "Free mobile/web development training with mentorship and certification.",
+    eligibility: "18+, basic programming interest",
+    deadline: new Date("2026-07-31"),
+    link: "https://developers.google.com/africa",
+    level: null,
+  },
+  {
+    title: "Civil Engineering National Quiz Competition",
+    provider: "Nigerian Society of Engineers",
+    type: "COMPETITION" as const,
+    category: "ENGINEERING" as const,
+    description: "Annual quiz competition for engineering undergraduates with cash prizes.",
+    eligibility: "Engineering undergraduate, any Nigerian university",
+    deadline: new Date("2026-09-15"),
+    link: "https://nse.org.ng",
+    level: null,
+  },
+  {
+    title: "Andela Technical Leadership Internship",
+    provider: "Andela",
+    type: "INTERNSHIP" as const,
+    category: "TECHNOLOGY" as const,
+    description: "Paid software engineering internship with mentorship for early-career developers.",
+    eligibility: "Strong programming fundamentals, portfolio of projects",
+    deadline: new Date("2026-08-01"),
+    link: "https://andela.com",
+    level: null,
+  },
+  {
+    title: "PwC Nigeria Graduate Internship",
+    provider: "PwC Nigeria",
+    type: "INTERNSHIP" as const,
+    category: "BUSINESS" as const,
+    description: "Summer internship program for final-year and recent graduates in accounting/business.",
+    eligibility: "Final year or recent graduate, strong academic record",
+    deadline: new Date("2026-07-15"),
+    link: "https://pwc.com/ng",
+    level: null,
+  },
+];
+
+const universityPrograms = [
+  {
+    name: "University of Lagos (UNILAG)",
+    country: "Nigeria",
+    program: "Medicine & Surgery (MBBS)",
+    requirements: "JAMB 250+, Post-UTME, O'level: Biology, Chemistry, Physics, Maths (credits)",
+    link: "https://unilag.edu.ng",
+  },
+  {
+    name: "Obafemi Awolowo University (OAU)",
+    country: "Nigeria",
+    program: "Computer Science",
+    requirements: "JAMB 220+, Post-UTME, O'level: Maths, Physics, Chemistry/Biology",
+    link: "https://oauife.edu.ng",
+  },
+  {
+    name: "University of Ibadan (UI)",
+    country: "Nigeria",
+    program: "Law (LLB)",
+    requirements: "JAMB 250+, Post-UTME, O'level: English, Literature, Government",
+    link: "https://ui.edu.ng",
+  },
+  {
+    name: "University of Toronto",
+    country: "Canada",
+    program: "Engineering Science",
+    requirements: "WAEC/IB/A-level, SAT optional, strong Maths & Physics",
+    link: "https://utoronto.ca",
+  },
+  {
+    name: "University of Manchester",
+    country: "United Kingdom",
+    program: "BSc Data Science",
+    requirements: "A-level/WAEC equivalent, strong Maths, IELTS 6.5+",
+    link: "https://manchester.ac.uk",
+  },
+  {
+    name: "Arizona State University",
+    country: "United States",
+    program: "BSc Computer Science",
+    requirements: "WAEC/SAT, TOEFL/IELTS, strong Maths background",
+    link: "https://asu.edu",
+  },
+];
+
 async function main() {
   console.log(`Seeding ${questions.length} questions...`);
+  await prisma.question.deleteMany();
   for (const q of questions) {
     await prisma.question.create({ data: q });
   }
+
+  console.log(`Seeding ${opportunities.length} opportunities...`);
+  await prisma.opportunity.deleteMany();
+  for (const o of opportunities) {
+    await prisma.opportunity.create({ data: o });
+  }
+
+  console.log(`Seeding ${universityPrograms.length} university programs...`);
+  await prisma.universityProgram.deleteMany();
+  for (const u of universityPrograms) {
+    await prisma.universityProgram.create({ data: u });
+  }
+
   console.log("Done.");
 }
 
