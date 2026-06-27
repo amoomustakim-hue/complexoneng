@@ -22,7 +22,7 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-cream">
       <DashboardHeader />
       <main className="pb-20">{children}</main>
-      <BottomNav />
+      <BottomNav track={profile.track} />
     </div>
   );
 }
