@@ -4,7 +4,17 @@ import { useRef, useState } from "react";
 
 type Message = { role: "user" | "model"; content: string };
 
-export default function CoachChat({ initialMessages }: { initialMessages: Message[] }) {
+export default function CoachChat({
+  initialMessages,
+  endpoint = "/api/ai/coach",
+  placeholder = "Ask your coach...",
+  emptyHint = "Ask your AI coach anything — study plans, subject help, or exam strategy.",
+}: {
+  initialMessages: Message[];
+  endpoint?: string;
+  placeholder?: string;
+  emptyHint?: string;
+}) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -20,7 +30,7 @@ export default function CoachChat({ initialMessages }: { initialMessages: Messag
     setMessages((m) => [...m, { role: "user", content: text }, { role: "model", content: "" }]);
 
     try {
-      const res = await fetch("/api/ai/coach", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text }),
@@ -63,9 +73,7 @@ export default function CoachChat({ initialMessages }: { initialMessages: Messag
     <div className="flex flex-col h-[calc(100vh-9rem)]">
       <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3">
         {messages.length === 0 && (
-          <p className="text-sm text-muted text-center mt-8">
-            Ask your AI coach anything — study plans, subject help, or exam strategy.
-          </p>
+          <p className="text-sm text-muted text-center mt-8">{emptyHint}</p>
         )}
         {messages.map((m, i) => (
           <div
@@ -86,7 +94,7 @@ export default function CoachChat({ initialMessages }: { initialMessages: Messag
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask your coach..."
+          placeholder={placeholder}
           className="flex-1 border border-border-light rounded-lg px-4 py-2 text-sm text-teal"
         />
         <button
