@@ -27,17 +27,27 @@ enum ExamType {
   POST_UTME
 }
 
+enum Track {
+  HIGH_SCHOOL
+  UNDERGRAD
+  RESEARCHER
+}
+
 model Profile {
-  id          String        @id @default(cuid())
-  clerkUserId String        @unique
-  email       String        @unique
-  fullName    String?
-  level       AcademicLevel?
-  school      String?
-  targetExam  ExamType?
-  onboarded   Boolean       @default(false)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id             String         @id @default(cuid())
+  clerkUserId    String         @unique
+  email          String         @unique
+  fullName       String?
+  track          Track?
+  level          AcademicLevel?
+  school         String?
+  targetExam     ExamType?
+  courseOfStudy  String?
+  researchArea   String?
+  researchStage  String?
+  onboarded      Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   cbtSessions   CbtSession[]
   coachSessions CoachSession[]

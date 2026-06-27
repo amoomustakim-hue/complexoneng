@@ -10,7 +10,7 @@ export default async function OnboardingPage() {
   }
 
   if (profile.onboarded) {
-    redirect("/academic/dashboard");
+    redirect("/home");
   }
 
   return (
@@ -19,7 +19,7 @@ export default async function OnboardingPage() {
         <p className="text-xs tracking-widest text-teal">GET STARTED</p>
         <h1 className="text-2xl font-bold text-teal mt-2">Tell us about yourself</h1>
         <p className="text-sm text-muted mt-1">
-          This helps us tailor your CBT practice and AI coach to your level.
+          This helps us tailor your whole dashboard to where you are in your journey.
         </p>
         <OnboardingForm />
       </div>
