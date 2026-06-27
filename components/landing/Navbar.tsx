@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
 const links = [
@@ -29,12 +30,18 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
-          <button className="text-sm font-semibold text-teal px-4 py-2 rounded-lg hover:bg-cream/50 transition">
+          <Link
+            href="/sign-in"
+            className="text-sm font-semibold text-teal px-4 py-2 rounded-lg hover:bg-cream/50 transition"
+          >
             Sign in
-          </button>
-          <button className="text-sm font-semibold bg-teal text-cream px-4 py-2 rounded-lg hover:opacity-90 transition">
+          </Link>
+          <Link
+            href="/sign-up"
+            className="text-sm font-semibold bg-teal text-cream px-4 py-2 rounded-lg hover:opacity-90 transition"
+          >
             Get started
-          </button>
+          </Link>
         </div>
 
         <button
@@ -59,12 +66,18 @@ export default function Navbar() {
             </a>
           ))}
           <div className="flex flex-col gap-2 pt-2">
-            <button className="text-sm font-semibold text-teal px-4 py-2 rounded-lg border border-border-light">
+            <Link
+              href="/sign-in"
+              className="text-sm font-semibold text-teal px-4 py-2 rounded-lg border border-border-light text-center"
+            >
               Sign in
-            </button>
-            <button className="text-sm font-semibold bg-teal text-cream px-4 py-2 rounded-lg">
+            </Link>
+            <Link
+              href="/sign-up"
+              className="text-sm font-semibold bg-teal text-cream px-4 py-2 rounded-lg text-center"
+            >
               Get started
-            </button>
+            </Link>
           </div>
         </div>
       )}

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Hero() {
   return (
     <section id="home" className="bg-teal min-h-screen flex items-center">
@@ -19,9 +21,12 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-wrap gap-4 mt-8">
-            <button className="bg-cream text-teal font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition">
+            <Link
+              href="/sign-up"
+              className="bg-cream text-teal font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition"
+            >
               Get started free
-            </button>
+            </Link>
             <a
               href="#how-it-works"
               className="border border-cream text-cream px-6 py-3 rounded-lg font-semibold hover:bg-cream/10 transition"
