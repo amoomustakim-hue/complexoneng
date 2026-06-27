@@ -65,6 +65,29 @@ enum ResearchRequestStatus {
   COMPLETED
 }
 
+enum InventoryCategory {
+  TEXTBOOK
+  LAPTOP
+  ACADEMIC_MATERIAL
+}
+
+enum HostelType {
+  OWNED
+  PARTNER
+}
+
+enum OrderItemType {
+  INVENTORY
+  HOSTEL
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELLED
+}
+
 model Profile {
   id            String         @id @default(cuid())
   clerkUserId   String         @unique
@@ -77,6 +100,7 @@ model Profile {
   courseOfStudy String?
   researchArea  String?
   researchStage String?
+  isAdmin       Boolean        @default(false)
   onboarded     Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
@@ -87,6 +111,7 @@ model Profile {
   universityApplications UniversityApplication[]
   researchRequests       ResearchRequest[]
   researchOffers         ResearchOffer[]
+  orders                 Order[]
 
   @@map("profiles")
 }
@@ -224,4 +249,65 @@ model ResearchOffer {
   @@index([requestId])
   @@index([profileId])
   @@map("research_offers")
+}
+
+model InventoryItem {
+  id          String            @id @default(cuid())
+  name        String
+  category    InventoryCategory
+  price       Int
+  stock       Int               @default(0)
+  condition   String?
+  format      String?
+  description String?
+  imageUrls   Json?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([category])
+  @@map("inventory_items")
+}
+
+model Hostel {
+  id             String     @id @default(cuid())
+  name           String
+  type           HostelType
+  area           String
+  pricePerYear   Int
+  deposit        Int
+  roomsAvailable Int        @default(0)
+  amenities      Json?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([area])
+  @@map("hostels")
+}
+
+model Order {
+  id           String        @id @default(cuid())
+  profileId    String?
+  profile      Profile?      @relation(fields: [profileId], references: [id], onDelete: SetNull)
+  studentPhone String?
+  itemType     OrderItemType
+  itemId       String
+  itemName     String
+  amount       Int
+  paystackRef  String?       @unique
+  status       OrderStatus   @default(PENDING)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([profileId])
+  @@index([status])
+  @@map("orders")
+}
+
+model WaSession {
+  phone     String   @id
+  state     String   @default("idle")
+  context   Json     @default("{}")
+  updatedAt DateTime @updatedAt
+
+  @@map("wa_sessions")
 }

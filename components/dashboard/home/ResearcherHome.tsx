@@ -78,13 +78,6 @@ export default function ResearcherHome({
           <p className="text-xs font-medium text-teal">Digital Portfolio</p>
         </Link>
       </div>
-
-      <Link
-        href="/academic/dashboard"
-        className="block text-xs text-muted underline mt-8"
-      >
-        Need exam prep instead? Visit the Academic Hub →
-      </Link>
     </div>
   );
 }

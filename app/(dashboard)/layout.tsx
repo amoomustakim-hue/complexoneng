@@ -20,8 +20,8 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-cream">
-      <DashboardHeader />
-      <main className="pb-20">{children}</main>
+      <DashboardHeader track={profile.track} />
+      <main className="pb-20 md:pb-0">{children}</main>
       <BottomNav track={profile.track} />
     </div>
   );
