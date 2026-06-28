@@ -88,30 +88,51 @@ enum OrderStatus {
   CANCELLED
 }
 
-model Profile {
-  id            String         @id @default(cuid())
-  clerkUserId   String         @unique
-  email         String         @unique
-  fullName      String?
-  track         Track?
-  level         AcademicLevel?
-  school        String?
-  targetExam    ExamType?
-  courseOfStudy String?
-  researchArea  String?
-  researchStage String?
-  isAdmin       Boolean        @default(false)
-  onboarded     Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+enum CommunityCategory {
+  JAMB_CANDIDATES
+  UNIVERSITY_STUDENTS
+  SUBJECT_ENTHUSIASTS
+  ENTREPRENEURS
+}
 
-  cbtSessions            CbtSession[]
-  coachSessions          CoachSession[]
-  careerResults          CareerResult[]
-  universityApplications UniversityApplication[]
-  researchRequests       ResearchRequest[]
-  researchOffers         ResearchOffer[]
-  orders                 Order[]
+enum MentorshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  COMPLETED
+}
+
+model Profile {
+  id              String         @id @default(cuid())
+  clerkUserId     String         @unique
+  email           String         @unique
+  fullName        String?
+  track           Track?
+  level           AcademicLevel?
+  school          String?
+  targetExam      ExamType?
+  courseOfStudy   String?
+  researchArea    String?
+  researchStage   String?
+  isAdmin         Boolean        @default(false)
+  isMentor        Boolean        @default(false)
+  mentorBio       String?
+  mentorExpertise String?
+  onboarded       Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  cbtSessions             CbtSession[]
+  coachSessions           CoachSession[]
+  careerResults           CareerResult[]
+  universityApplications  UniversityApplication[]
+  researchRequests        ResearchRequest[]
+  researchOffers          ResearchOffer[]
+  orders                  Order[]
+  communityMemberships    CommunityMembership[]
+  communityPosts          CommunityPost[]
+  mentorshipRequestsSent  MentorshipRequest[]      @relation("MentorshipStudent")
+  mentorshipRequestsRecv  MentorshipRequest[]      @relation("MentorshipMentor")
 
   @@map("profiles")
 }
@@ -310,4 +331,61 @@ model WaSession {
   updatedAt DateTime @updatedAt
 
   @@map("wa_sessions")
+}
+
+model Community {
+  id          String            @id @default(cuid())
+  name        String
+  category    CommunityCategory
+  description String
+  createdAt   DateTime          @default(now())
+
+  memberships CommunityMembership[]
+  posts       CommunityPost[]
+
+  @@index([category])
+  @@map("communities")
+}
+
+model CommunityMembership {
+  id          String    @id @default(cuid())
+  communityId String
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  profileId   String
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  joinedAt    DateTime  @default(now())
+
+  @@unique([communityId, profileId])
+  @@index([profileId])
+  @@map("community_memberships")
+}
+
+model CommunityPost {
+  id          String    @id @default(cuid())
+  communityId String
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  profileId   String
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  content     String
+  createdAt   DateTime  @default(now())
+
+  @@index([communityId])
+  @@map("community_posts")
+}
+
+model MentorshipRequest {
+  id             String           @id @default(cuid())
+  mentorId       String
+  mentor         Profile          @relation("MentorshipMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  studentId      String
+  student        Profile          @relation("MentorshipStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  message        String
+  preferredTopic String?
+  status         MentorshipStatus @default(PENDING)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([mentorId])
+  @@index([studentId])
+  @@map("mentorship_requests")
 }

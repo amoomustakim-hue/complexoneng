@@ -363,6 +363,39 @@ const hostels = [
   },
 ];
 
+const communities = [
+  {
+    name: "JAMB 2026 Candidates",
+    category: "JAMB_CANDIDATES" as const,
+    description: "Study groups, timetables, and motivation for this year's JAMB candidates.",
+  },
+  {
+    name: "Post-UTME Warriors",
+    category: "JAMB_CANDIDATES" as const,
+    description: "Share Post-UTME past questions and school-specific admission tips.",
+  },
+  {
+    name: "UNILAG Freshers",
+    category: "UNIVERSITY_STUDENTS" as const,
+    description: "New UNILAG students connecting, sharing course advice, and settling in.",
+  },
+  {
+    name: "Computer Science Hub",
+    category: "SUBJECT_ENTHUSIASTS" as const,
+    description: "For students studying or passionate about Computer Science and software.",
+  },
+  {
+    name: "Pre-Med Nigeria",
+    category: "SUBJECT_ENTHUSIASTS" as const,
+    description: "Aspiring and current medical students discussing MBBS life and study strategy.",
+  },
+  {
+    name: "Student Entrepreneurs Network",
+    category: "ENTREPRENEURS" as const,
+    description: "Students building side hustles and startups while in school.",
+  },
+];
+
 async function main() {
   console.log(`Seeding ${questions.length} questions...`);
   await prisma.question.deleteMany();
@@ -392,6 +425,14 @@ async function main() {
   await prisma.hostel.deleteMany();
   for (const h of hostels) {
     await prisma.hostel.create({ data: h });
+  }
+
+  console.log(`Seeding ${communities.length} communities...`);
+  await prisma.communityPost.deleteMany();
+  await prisma.communityMembership.deleteMany();
+  await prisma.community.deleteMany();
+  for (const c of communities) {
+    await prisma.community.create({ data: c });
   }
 
   console.log("Done.");
