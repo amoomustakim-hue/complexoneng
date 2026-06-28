@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { seedLms } from "./seed-lms";
 
 const prisma = new PrismaClient();
 
@@ -434,6 +435,8 @@ async function main() {
   for (const c of communities) {
     await prisma.community.create({ data: c });
   }
+
+  await seedLms(prisma);
 
   console.log("Done.");
 }
