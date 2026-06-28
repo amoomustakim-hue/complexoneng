@@ -118,21 +118,27 @@ model Profile {
   isMentor        Boolean        @default(false)
   mentorBio       String?
   mentorExpertise String?
+  portfolioSlug   String?        @unique
+  portfolioPublic Boolean        @default(false)
   onboarded       Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
-  cbtSessions             CbtSession[]
-  coachSessions           CoachSession[]
-  careerResults           CareerResult[]
-  universityApplications  UniversityApplication[]
-  researchRequests        ResearchRequest[]
-  researchOffers          ResearchOffer[]
-  orders                  Order[]
-  communityMemberships    CommunityMembership[]
-  communityPosts          CommunityPost[]
-  mentorshipRequestsSent  MentorshipRequest[]      @relation("MentorshipStudent")
-  mentorshipRequestsRecv  MentorshipRequest[]      @relation("MentorshipMentor")
+  cbtSessions            CbtSession[]
+  coachSessions          CoachSession[]
+  careerResults          CareerResult[]
+  universityApplications UniversityApplication[]
+  researchRequests       ResearchRequest[]
+  researchOffers         ResearchOffer[]
+  orders                 Order[]
+  communityMemberships   CommunityMembership[]
+  communityPosts         CommunityPost[]
+  mentorshipRequestsSent MentorshipRequest[]      @relation("MentorshipStudent")
+  mentorshipRequestsRecv MentorshipRequest[]      @relation("MentorshipMentor")
+  certificates           Certificate[]
+  projects               Project[]
+  volunteering           VolunteeringExperience[]
+  researchOutputs        ResearchOutput[]
 
   @@map("profiles")
 }
@@ -388,4 +394,59 @@ model MentorshipRequest {
   @@index([mentorId])
   @@index([studentId])
   @@map("mentorship_requests")
+}
+
+model Certificate {
+  id         String    @id @default(cuid())
+  profileId  String
+  profile    Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title      String
+  issuer     String
+  dateIssued DateTime?
+  link       String?
+  createdAt  DateTime  @default(now())
+
+  @@index([profileId])
+  @@map("certificates")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  link        String?
+  createdAt   DateTime @default(now())
+
+  @@index([profileId])
+  @@map("projects")
+}
+
+model VolunteeringExperience {
+  id           String    @id @default(cuid())
+  profileId    String
+  profile      Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  organization String
+  role         String
+  description  String?
+  startDate    DateTime?
+  endDate      DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([profileId])
+  @@map("volunteering_experiences")
+}
+
+model ResearchOutput {
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  link        String?
+  createdAt   DateTime @default(now())
+
+  @@index([profileId])
+  @@map("research_outputs")
 }
