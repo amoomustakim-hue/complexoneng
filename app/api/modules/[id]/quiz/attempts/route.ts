@@ -18,10 +18,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
 
   const { id } = await params;
-  const { score, total, answers } = (await req.json()) as {
+  const { score, total, answers, questionsUsed } = (await req.json()) as {
     score?: number;
     total?: number;
     answers?: Record<string, string>;
+    questionsUsed?: unknown;
   };
 
   if (typeof score !== "number" || typeof total !== "number") {
@@ -38,6 +39,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       score,
       total,
       answers: answers ?? {},
+      questionsUsed: questionsUsed ? (questionsUsed as never) : undefined,
     },
   });
 

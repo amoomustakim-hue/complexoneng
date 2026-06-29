@@ -125,6 +125,8 @@ model Profile {
   mentorExpertise String?
   portfolioSlug   String?        @unique
   portfolioPublic Boolean        @default(false)
+  guardianSlug    String?        @unique
+  guardianAccess  Boolean        @default(false)
   points          Int            @default(0)
   currentStreak   Int            @default(0)
   longestStreak   Int            @default(0)
@@ -503,15 +505,16 @@ model Module {
 }
 
 model ModuleQuizAttempt {
-  id        String   @id @default(cuid())
-  profileId String
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  moduleId  String
-  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  score     Int
-  total     Int
-  answers   Json
-  createdAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  profileId     String
+  profile       Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  moduleId      String
+  module        Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  score         Int
+  total         Int
+  answers       Json
+  questionsUsed Json?
+  createdAt     DateTime @default(now())
 
   @@index([profileId])
   @@index([moduleId])

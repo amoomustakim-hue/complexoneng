@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { BookOpen, ClipboardList, Sparkles, Map } from "lucide-react";
 import { getCurrentProfile } from "@/lib/profile";
 import { prisma } from "@/lib/prisma";
+import GuardianAccessToggle from "@/components/academic/GuardianAccessToggle";
 import StreakBadge from "@/components/academic/StreakBadge";
 
 export default async function AcademicOverviewPage() {
@@ -33,6 +35,11 @@ export default async function AcademicOverviewPage() {
         (cbtSessions.reduce((acc, s) => acc + s.score / s.total, 0) / cbtSessions.length) * 100
       )
     : null;
+
+  const headersList = await headers();
+  const host = headersList.get("host") ?? "localhost:3000";
+  const protocol = host.startsWith("localhost") ? "http" : "https";
+  const baseUrl = `${protocol}://${host}`;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-8">
@@ -135,6 +142,14 @@ export default async function AcademicOverviewPage() {
             </Link>
           </div>
         )}
+      </div>
+
+      <div className="mt-8">
+        <GuardianAccessToggle
+          initialEnabled={profile.guardianAccess}
+          initialSlug={profile.guardianSlug}
+          baseUrl={baseUrl}
+        />
       </div>
     </div>
   );

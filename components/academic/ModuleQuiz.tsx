@@ -16,31 +16,38 @@ export default function ModuleQuiz({
   continueLabel: string;
 }) {
   const [quiz, setQuiz] = useState<QuizQuestion[] | null>(null);
+  const [isAdaptive, setIsAdaptive] = useState(false);
   const [error, setError] = useState("");
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [retaking, setRetaking] = useState(false);
 
-  useEffect(() => {
-    let active = true;
+  function loadQuiz(retake: boolean) {
+    setError("");
+    setQuiz(null);
+    setSubmitted(false);
+    setAnswers({});
 
-    fetch(`/api/modules/${moduleId}/quiz`)
+    fetch(`/api/modules/${moduleId}/quiz${retake ? "?retake=true" : ""}`)
       .then(async (res) => {
         const data = await res.json();
-        if (!active) return;
         if (!res.ok) {
           setError(data.error ?? "Couldn't load a quiz for this topic.");
           return;
         }
         setQuiz(data.quiz);
+        setIsAdaptive(Boolean(data.isAdaptive));
       })
       .catch(() => {
-        if (active) setError("Couldn't load a quiz for this topic.");
-      });
+        setError("Couldn't load a quiz for this topic.");
+      })
+      .finally(() => setRetaking(false));
+  }
 
-    return () => {
-      active = false;
-    };
+  useEffect(() => {
+    loadQuiz(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moduleId]);
 
   async function handleSubmit() {
@@ -53,11 +60,16 @@ export default function ModuleQuiz({
       await fetch(`/api/modules/${moduleId}/quiz/attempts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score: finalScore, total: quiz.length, answers }),
+        body: JSON.stringify({ score: finalScore, total: quiz.length, answers, questionsUsed: quiz }),
       });
     } catch {
       // attempt logging is best-effort
     }
+  }
+
+  function handleRetake() {
+    setRetaking(true);
+    loadQuiz(true);
   }
 
   if (error) {
@@ -88,9 +100,12 @@ export default function ModuleQuiz({
   }
 
   if (submitted) {
+    const passed = score >= quiz.length;
     return (
       <div className="max-w-xl mx-auto px-6 py-12">
-        <p className="text-xs tracking-widest text-teal">QUICK CHECK RESULT</p>
+        <p className="text-xs tracking-widest text-teal">
+          {isAdaptive ? "FOCUSED REVIEW RESULT" : "QUICK CHECK RESULT"}
+        </p>
         <h1 className="text-2xl font-bold text-teal mt-1">
           {score} / {quiz.length}
         </h1>
@@ -120,21 +135,36 @@ export default function ModuleQuiz({
           })}
         </div>
 
-        <Link
-          href={continueHref}
-          className="inline-block mt-8 bg-teal text-cream font-semibold px-6 py-3 rounded-lg"
-        >
-          {continueLabel}
-        </Link>
+        <div className="flex flex-wrap gap-3 mt-8">
+          {!passed && (
+            <button
+              onClick={handleRetake}
+              disabled={retaking}
+              className="text-sm font-semibold text-teal border border-teal px-6 py-3 rounded-lg disabled:opacity-50"
+            >
+              {retaking ? "Preparing focused review..." : "Retake with focused review"}
+            </button>
+          )}
+          <Link
+            href={continueHref}
+            className="inline-block bg-teal text-cream font-semibold px-6 py-3 rounded-lg"
+          >
+            {continueLabel}
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="max-w-xl mx-auto px-6 py-12">
-      <p className="text-xs tracking-widest text-teal">QUICK CHECK</p>
+      <p className="text-xs tracking-widest text-teal">{isAdaptive ? "FOCUSED REVIEW" : "QUICK CHECK"}</p>
       <h1 className="text-2xl font-bold text-teal mt-1">{moduleTitle}</h1>
-      <p className="text-sm text-muted mt-1">A few questions before you move on.</p>
+      <p className="text-sm text-muted mt-1">
+        {isAdaptive
+          ? "These questions target what you missed last time."
+          : "A few questions before you move on."}
+      </p>
 
       <div className="flex flex-col gap-5 mt-6">
         {quiz.map((q, i) => (
