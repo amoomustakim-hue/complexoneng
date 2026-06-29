@@ -146,6 +146,7 @@ model Profile {
   researchOutputs        ResearchOutput[]
   enrollments            Enrollment[]
   lessonProgress         LessonProgress[]
+  moduleQuizAttempts     ModuleQuizAttempt[]
 
   @@map("profiles")
 }
@@ -475,17 +476,35 @@ model Course {
 }
 
 model Module {
-  id        String   @id @default(cuid())
-  courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  title     String
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  courseId      String
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title         String
+  order         Int      @default(0)
+  quizQuestions Json?
+  createdAt     DateTime @default(now())
 
-  lessons Lesson[]
+  lessons      Lesson[]
+  quizAttempts ModuleQuizAttempt[]
 
   @@index([courseId])
   @@map("course_modules")
+}
+
+model ModuleQuizAttempt {
+  id        String   @id @default(cuid())
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  moduleId  String
+  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  score     Int
+  total     Int
+  answers   Json
+  createdAt DateTime @default(now())
+
+  @@index([profileId])
+  @@index([moduleId])
+  @@map("module_quiz_attempts")
 }
 
 model Lesson {

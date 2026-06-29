@@ -13,6 +13,17 @@ export function getCoachModel() {
   });
 }
 
+export function getQuizGeneratorModel() {
+  return genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction:
+      "You write short multiple-choice quiz questions for Nigerian students to check understanding of a " +
+      "specific topic they just studied. Questions must be clear, exam-appropriate, and strictly based on the " +
+      "topic given. Always respond with valid JSON only, matching the exact schema requested — no extra text.",
+    generationConfig: { responseMimeType: "application/json" },
+  });
+}
+
 export function getResearchAssistantModel() {
   return genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
