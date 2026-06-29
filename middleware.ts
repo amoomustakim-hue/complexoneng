@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/p/(.*)",
+  "/g/(.*)",
   "/api/whatsapp/(.*)",
   "/api/paystack/(.*)",
 ]);
