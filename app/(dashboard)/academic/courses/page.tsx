@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Star } from "lucide-react";
 import { getCurrentProfile } from "@/lib/profile";
 import { prisma } from "@/lib/prisma";
 import { getCourseTagForLevel } from "@/lib/academic";
@@ -41,6 +42,7 @@ export default async function CourseCatalogPage() {
     include: {
       modules: { include: { lessons: { select: { id: true } } } },
       enrollments: { where: { profileId: profile.id } },
+      reviews: { select: { rating: true } },
     },
   });
 
@@ -70,14 +72,25 @@ export default async function CourseCatalogPage() {
           const completedLessons = allLessons.filter((l) => completedSet.has(l.id)).length;
           const pct = totalLessons ? Math.round((completedLessons / totalLessons) * 100) : 0;
           const enrolled = course.enrollments.length > 0;
+          const avgRating = course.reviews.length
+            ? course.reviews.reduce((acc, r) => acc + r.rating, 0) / course.reviews.length
+            : null;
 
           return (
             <div key={course.id} className="rounded-xl border border-border-light bg-white p-5">
               <h3 className="font-bold text-teal">{course.title}</h3>
               <p className="text-sm text-muted mt-1">{course.description}</p>
-              <p className="text-xs text-muted mt-2">
-                {course.modules.length} modules · {totalLessons} lessons
-              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <p className="text-xs text-muted">
+                  {course.modules.length} modules · {totalLessons} lessons
+                </p>
+                {avgRating !== null && (
+                  <span className="flex items-center gap-1 text-xs text-teal font-semibold">
+                    <Star size={12} className="fill-lime text-lime" />
+                    {avgRating.toFixed(1)} ({course.reviews.length})
+                  </span>
+                )}
+              </div>
 
               {enrolled && (
                 <div className="mt-3">

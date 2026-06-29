@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { PlayCircle, FileText, CheckCircle2, Circle } from "lucide-react";
+import { PlayCircle, FileText, CheckCircle2, Circle, Award } from "lucide-react";
 import { getCurrentProfile } from "@/lib/profile";
 import { prisma } from "@/lib/prisma";
+import { checkAndIssueCertificate } from "@/lib/certificate";
 import MarkCompleteButton from "@/components/academic/MarkCompleteButton";
 import EnrollButton from "@/components/academic/EnrollButton";
+import CourseReviewForm from "@/components/academic/CourseReviewForm";
 
 export default async function CoursePlayerPage({
   params,
@@ -54,6 +56,13 @@ export default async function CoursePlayerPage({
     where: { profileId: profile.id, lessonId: { in: allLessons.map((l) => l.id) } },
   });
   const completedSet = new Set(progress.map((p) => p.lessonId));
+
+  const certificate = enrollment
+    ? await checkAndIssueCertificate(profile.id, course.id)
+    : null;
+  const review = await prisma.courseReview.findUnique({
+    where: { profileId_courseId: { profileId: profile.id, courseId: course.id } },
+  });
 
   return (
     <div className="flex flex-col md:flex-row">
@@ -156,6 +165,34 @@ export default async function CoursePlayerPage({
             )}
           </div>
         </div>
+
+        {certificate && (
+          <div className="rounded-xl bg-teal text-cream p-5 mt-8 flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <Award size={24} />
+              <div>
+                <p className="font-bold">Course complete!</p>
+                <p className="text-sm opacity-75">You&apos;ve finished every lesson in {course.title}.</p>
+              </div>
+            </div>
+            <Link
+              href={`/academic/courses/${course.id}/certificate`}
+              className="text-sm font-semibold bg-cream text-teal px-4 py-2 rounded-lg shrink-0"
+            >
+              View certificate
+            </Link>
+          </div>
+        )}
+
+        {enrollment && (
+          <div className="mt-4">
+            <CourseReviewForm
+              courseId={course.id}
+              initialRating={review?.rating ?? 0}
+              initialComment={review?.comment ?? ""}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
