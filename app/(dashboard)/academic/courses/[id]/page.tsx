@@ -7,6 +7,8 @@ import { checkAndIssueCertificate } from "@/lib/certificate";
 import MarkCompleteButton from "@/components/academic/MarkCompleteButton";
 import EnrollButton from "@/components/academic/EnrollButton";
 import CourseReviewForm from "@/components/academic/CourseReviewForm";
+import LessonSidePanel from "@/components/academic/LessonSidePanel";
+import { getOrCreateCoachSession } from "@/lib/coach";
 
 export default async function CoursePlayerPage({
   params,
@@ -63,6 +65,18 @@ export default async function CoursePlayerPage({
   const review = await prisma.courseReview.findUnique({
     where: { profileId_courseId: { profileId: profile.id, courseId: course.id } },
   });
+
+  const [aiSession, note, questions] = await Promise.all([
+    getOrCreateCoachSession(profile.id, `lesson:${currentLesson.id}`),
+    prisma.lessonNote.findUnique({
+      where: { profileId_lessonId: { profileId: profile.id, lessonId: currentLesson.id } },
+    }),
+    prisma.lessonQuestion.findMany({
+      where: { lessonId: currentLesson.id },
+      orderBy: { createdAt: "desc" },
+      include: { profile: true, answers: { include: { profile: true }, orderBy: { createdAt: "asc" } } },
+    }),
+  ]);
 
   return (
     <div className="flex flex-col md:flex-row">
@@ -193,6 +207,25 @@ export default async function CoursePlayerPage({
             />
           </div>
         )}
+
+        <LessonSidePanel
+          lessonId={currentLesson.id}
+          currentProfileId={profile.id}
+          initialAiMessages={(aiSession.messages as { role: "user" | "model"; content: string }[]) ?? []}
+          initialNoteContent={note?.content ?? ""}
+          initialQuestions={questions.map((q) => ({
+            id: q.id,
+            content: q.content,
+            profileId: q.profileId,
+            profile: { fullName: q.profile.fullName, email: q.profile.email },
+            answers: q.answers.map((a) => ({
+              id: a.id,
+              content: a.content,
+              isBest: a.isBest,
+              profile: { fullName: a.profile.fullName, email: a.profile.email },
+            })),
+          }))}
+        />
       </div>
     </div>
   );

@@ -149,6 +149,9 @@ model Profile {
   moduleQuizAttempts     ModuleQuizAttempt[]
   courseReviews          CourseReview[]
   courseCertificates     CourseCertificate[]
+  lessonNotes            LessonNote[]
+  lessonQuestions        LessonQuestion[]
+  lessonAnswers          LessonAnswer[]
 
   @@map("profiles")
 }
@@ -522,7 +525,9 @@ model Lesson {
   videoUrl    String?
   createdAt   DateTime    @default(now())
 
-  progress LessonProgress[]
+  progress  LessonProgress[]
+  notes     LessonNote[]
+  questions LessonQuestion[]
 
   @@index([moduleId])
   @@map("lessons")
@@ -581,4 +586,48 @@ model CourseCertificate {
 
   @@unique([profileId, courseId])
   @@map("course_certificates")
+}
+
+model LessonNote {
+  id        String   @id @default(cuid())
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([profileId, lessonId])
+  @@index([profileId])
+  @@map("lesson_notes")
+}
+
+model LessonQuestion {
+  id        String   @id @default(cuid())
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+
+  answers LessonAnswer[]
+
+  @@index([lessonId])
+  @@map("lesson_questions")
+}
+
+model LessonAnswer {
+  id         String         @id @default(cuid())
+  questionId String
+  question   LessonQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  profileId  String
+  profile    Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  content    String
+  isBest     Boolean        @default(false)
+  createdAt  DateTime       @default(now())
+
+  @@index([questionId])
+  @@map("lesson_answers")
 }
