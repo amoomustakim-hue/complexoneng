@@ -5,6 +5,8 @@ import { getCurrentProfile } from "@/lib/profile";
 import { prisma } from "@/lib/prisma";
 import MarkCompleteButton from "@/components/academic/MarkCompleteButton";
 import EnrollButton from "@/components/academic/EnrollButton";
+import LessonSidePanel from "@/components/academic/LessonSidePanel";
+import { getOrCreateCoachSession } from "@/lib/coach";
 
 export default async function CoursePlayerPage({
   params,
@@ -54,6 +56,18 @@ export default async function CoursePlayerPage({
     where: { profileId: profile.id, lessonId: { in: allLessons.map((l) => l.id) } },
   });
   const completedSet = new Set(progress.map((p) => p.lessonId));
+
+  const [aiSession, note, questions] = await Promise.all([
+    getOrCreateCoachSession(profile.id, `lesson:${currentLesson.id}`),
+    prisma.lessonNote.findUnique({
+      where: { profileId_lessonId: { profileId: profile.id, lessonId: currentLesson.id } },
+    }),
+    prisma.lessonQuestion.findMany({
+      where: { lessonId: currentLesson.id },
+      orderBy: { createdAt: "desc" },
+      include: { profile: true, answers: { include: { profile: true }, orderBy: { createdAt: "asc" } } },
+    }),
+  ]);
 
   return (
     <div className="flex flex-col md:flex-row">
@@ -156,6 +170,25 @@ export default async function CoursePlayerPage({
             )}
           </div>
         </div>
+
+        <LessonSidePanel
+          lessonId={currentLesson.id}
+          currentProfileId={profile.id}
+          initialAiMessages={(aiSession.messages as { role: "user" | "model"; content: string }[]) ?? []}
+          initialNoteContent={note?.content ?? ""}
+          initialQuestions={questions.map((q) => ({
+            id: q.id,
+            content: q.content,
+            profileId: q.profileId,
+            profile: { fullName: q.profile.fullName, email: q.profile.email },
+            answers: q.answers.map((a) => ({
+              id: a.id,
+              content: a.content,
+              isBest: a.isBest,
+              profile: { fullName: a.profile.fullName, email: a.profile.email },
+            })),
+          }))}
+        />
       </div>
     </div>
   );

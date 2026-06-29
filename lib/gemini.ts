@@ -24,6 +24,17 @@ export function getQuizGeneratorModel() {
   });
 }
 
+export function getLessonHelperModel(lessonTitle: string, lessonContent: string) {
+  return genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction:
+      `You are ComplexOne's AI study helper for the specific lesson "${lessonTitle}". ` +
+      `Lesson content: ${lessonContent ?? "No written content yet."}\n\n` +
+      "Answer the student's questions about this lesson specifically — explain concepts, work through examples, " +
+      "and clarify anything confusing. Stay focused on this lesson's topic. Keep responses concise.",
+  });
+}
+
 export function getResearchAssistantModel() {
   return genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
