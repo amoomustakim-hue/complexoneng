@@ -43,6 +43,10 @@ export default async function CoursePlayerPage({
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
   const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
 
+  const currentModule = course.modules.find((m) => m.lessons.some((l) => l.id === currentLesson.id))!;
+  const isLastLessonInModule =
+    currentModule.lessons[currentModule.lessons.length - 1]?.id === currentLesson.id;
+
   const enrollment = await prisma.enrollment.findUnique({
     where: { profileId_courseId: { profileId: profile.id, courseId: id } },
   });
@@ -133,13 +137,22 @@ export default async function CoursePlayerPage({
                 ← Previous
               </Link>
             )}
-            {nextLesson && (
+            {isLastLessonInModule ? (
               <Link
-                href={`/academic/courses/${course.id}?lesson=${nextLesson.id}`}
+                href={`/academic/courses/${course.id}/modules/${currentModule.id}/quiz`}
                 className="text-sm font-semibold bg-teal text-cream px-4 py-2 rounded-lg"
               >
-                Next →
+                Take quick check →
               </Link>
+            ) : (
+              nextLesson && (
+                <Link
+                  href={`/academic/courses/${course.id}?lesson=${nextLesson.id}`}
+                  className="text-sm font-semibold bg-teal text-cream px-4 py-2 rounded-lg"
+                >
+                  Next →
+                </Link>
+              )
             )}
           </div>
         </div>
