@@ -3,10 +3,10 @@ import { BookOpen, Briefcase, FlaskConical, ShoppingBag, Users, IdCard } from "l
 
 const modules = [
   {
-    href: "/academic/dashboard",
+    href: "/academic",
     icon: BookOpen,
     title: "Academic Success Hub",
-    body: "AI coach, CBT practice, and your performance dashboard.",
+    body: "Courses, AI coach, CBT practice, and your performance dashboard.",
   },
   {
     href: "/career",
