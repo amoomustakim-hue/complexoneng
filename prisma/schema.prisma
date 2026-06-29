@@ -127,6 +127,10 @@ model Profile {
   portfolioPublic Boolean        @default(false)
   guardianSlug    String?        @unique
   guardianAccess  Boolean        @default(false)
+  points          Int            @default(0)
+  currentStreak   Int            @default(0)
+  longestStreak   Int            @default(0)
+  lastActivityAt  DateTime?
   onboarded       Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
@@ -149,6 +153,8 @@ model Profile {
   enrollments            Enrollment[]
   lessonProgress         LessonProgress[]
   moduleQuizAttempts     ModuleQuizAttempt[]
+  courseReviews          CourseReview[]
+  courseCertificates     CourseCertificate[]
   lessonNotes            LessonNote[]
   lessonQuestions        LessonQuestion[]
   lessonAnswers          LessonAnswer[]
@@ -473,8 +479,10 @@ model Course {
   order       Int      @default(0)
   createdAt   DateTime @default(now())
 
-  modules     Module[]
-  enrollments Enrollment[]
+  modules      Module[]
+  enrollments  Enrollment[]
+  reviews      CourseReview[]
+  certificates CourseCertificate[]
 
   @@index([subject])
   @@map("courses")
@@ -556,6 +564,35 @@ model LessonProgress {
   @@unique([profileId, lessonId])
   @@index([profileId])
   @@map("lesson_progress")
+}
+
+model CourseReview {
+  id        String   @id @default(cuid())
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([profileId, courseId])
+  @@index([courseId])
+  @@map("course_reviews")
+}
+
+model CourseCertificate {
+  id              String   @id @default(cuid())
+  profileId       String
+  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  courseId        String
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  certificateSlug String   @unique
+  issuedAt        DateTime @default(now())
+
+  @@unique([profileId, courseId])
+  @@map("course_certificates")
 }
 
 model LessonNote {

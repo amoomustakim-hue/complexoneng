@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "profiles" ADD COLUMN     "currentStreak" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "lastActivityAt" TIMESTAMP(3),
+ADD COLUMN     "longestStreak" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "points" INTEGER NOT NULL DEFAULT 0;

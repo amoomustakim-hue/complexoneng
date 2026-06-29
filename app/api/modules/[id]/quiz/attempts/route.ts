@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { awardActivity } from "@/lib/gamification";
+
+const QUIZ_BASE_POINTS = 20;
+const QUIZ_POINTS_PER_CORRECT = 5;
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
@@ -25,6 +29,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "score and total are required" }, { status: 400 });
   }
 
+  const isFirstAttempt =
+    (await prisma.moduleQuizAttempt.count({ where: { profileId: profile.id, moduleId: id } })) === 0;
+
   const attempt = await prisma.moduleQuizAttempt.create({
     data: {
       profileId: profile.id,
@@ -35,6 +42,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       questionsUsed: questionsUsed ? (questionsUsed as never) : undefined,
     },
   });
+
+  if (isFirstAttempt) {
+    await awardActivity(profile.id, QUIZ_BASE_POINTS + score * QUIZ_POINTS_PER_CORRECT);
+  }
 
   return NextResponse.json({ attempt });
 }
