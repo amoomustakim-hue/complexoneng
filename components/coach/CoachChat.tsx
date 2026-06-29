@@ -9,11 +9,13 @@ export default function CoachChat({
   endpoint = "/api/ai/coach",
   placeholder = "Ask your coach...",
   emptyHint = "Ask your AI coach anything — study plans, subject help, or exam strategy.",
+  heightClassName = "h-[calc(100vh-9rem)]",
 }: {
   initialMessages: Message[];
   endpoint?: string;
   placeholder?: string;
   emptyHint?: string;
+  heightClassName?: string;
 }) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
@@ -70,7 +72,7 @@ export default function CoachChat({
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-9rem)]">
+    <div className={`flex flex-col ${heightClassName}`}>
       <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3">
         {messages.length === 0 && (
           <p className="text-sm text-muted text-center mt-8">{emptyHint}</p>
