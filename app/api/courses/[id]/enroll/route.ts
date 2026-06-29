@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { getCourseTagForLevel } from "@/lib/academic";
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
@@ -17,6 +18,10 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   const course = await prisma.course.findUnique({ where: { id } });
   if (!course) {
     return NextResponse.json({ error: "Course not found" }, { status: 404 });
+  }
+
+  if (course.levelTag !== getCourseTagForLevel(profile.level)) {
+    return NextResponse.json({ error: "This course isn't available for your level" }, { status: 403 });
   }
 
   await prisma.enrollment.upsert({
