@@ -11,19 +11,25 @@ export default async function PortfolioPage() {
     redirect("/sign-in");
   }
 
-  const [certificates, projects, volunteering, researchOutputs, cbtSessions] = await Promise.all([
-    prisma.certificate.findMany({ where: { profileId: profile.id }, orderBy: { createdAt: "desc" } }),
-    prisma.project.findMany({ where: { profileId: profile.id }, orderBy: { createdAt: "desc" } }),
-    prisma.volunteeringExperience.findMany({
-      where: { profileId: profile.id },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.researchOutput.findMany({
-      where: { profileId: profile.id },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.cbtSession.findMany({ where: { profileId: profile.id } }),
-  ]);
+  const [certificates, projects, volunteering, researchOutputs, cbtSessions, courseCertificates] =
+    await Promise.all([
+      prisma.certificate.findMany({ where: { profileId: profile.id }, orderBy: { createdAt: "desc" } }),
+      prisma.project.findMany({ where: { profileId: profile.id }, orderBy: { createdAt: "desc" } }),
+      prisma.volunteeringExperience.findMany({
+        where: { profileId: profile.id },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.researchOutput.findMany({
+        where: { profileId: profile.id },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.cbtSession.findMany({ where: { profileId: profile.id } }),
+      prisma.courseCertificate.findMany({
+        where: { profileId: profile.id },
+        orderBy: { issuedAt: "desc" },
+        include: { course: true },
+      }),
+    ]);
 
   const headersList = await headers();
   const host = headersList.get("host") ?? "localhost:3000";
@@ -68,6 +74,26 @@ export default async function PortfolioPage() {
           </div>
         </div>
       </div>
+
+      {courseCertificates.length > 0 && (
+        <div className="rounded-xl border border-border-light bg-white p-5 mt-4">
+          <h2 className="font-bold text-teal">Course certificates</h2>
+          <div className="flex flex-col gap-2 mt-3">
+            {courseCertificates.map((cert) => (
+              <a
+                key={cert.id}
+                href={`/c/${cert.certificateSlug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg bg-cream px-3 py-2 text-sm text-teal font-medium hover:underline"
+              >
+                {cert.course.title} — issued{" "}
+                {cert.issuedAt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-4 mt-4">
         <PortfolioListSection
