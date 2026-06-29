@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { awardActivity } from "@/lib/gamification";
+
+const POINTS_PER_LESSON = 10;
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
@@ -19,11 +22,14 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
   }
 
-  await prisma.lessonProgress.upsert({
+  const existing = await prisma.lessonProgress.findUnique({
     where: { profileId_lessonId: { profileId: profile.id, lessonId: id } },
-    create: { profileId: profile.id, lessonId: id },
-    update: {},
   });
+
+  if (!existing) {
+    await prisma.lessonProgress.create({ data: { profileId: profile.id, lessonId: id } });
+    await awardActivity(profile.id, POINTS_PER_LESSON);
+  }
 
   return NextResponse.json({ completed: true });
 }

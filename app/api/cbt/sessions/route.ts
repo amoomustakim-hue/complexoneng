@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { awardActivity } from "@/lib/gamification";
+
+const CBT_SESSION_POINTS = 5;
 
 export async function GET() {
   const { userId } = await auth();
@@ -54,6 +57,8 @@ export async function POST(req: Request) {
       completedAt: new Date(),
     },
   });
+
+  await awardActivity(profile.id, CBT_SESSION_POINTS);
 
   return NextResponse.json({ session });
 }

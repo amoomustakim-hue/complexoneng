@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BookOpen, ClipboardList, Sparkles } from "lucide-react";
+import { BookOpen, ClipboardList, Sparkles, Map } from "lucide-react";
 import { getCurrentProfile } from "@/lib/profile";
 import { prisma } from "@/lib/prisma";
+import StreakBadge from "@/components/academic/StreakBadge";
 
 export default async function AcademicOverviewPage() {
   const profile = await getCurrentProfile();
@@ -35,18 +36,30 @@ export default async function AcademicOverviewPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-8">
-      <p className="text-xs tracking-widest text-teal">ACADEMIC SUCCESS HUB</p>
-      <h1 className="text-2xl font-bold text-teal mt-1">
-        {profile.fullName ? `Welcome back, ${profile.fullName.split(" ")[0]}` : "Welcome back"}
-      </h1>
+      <div className="flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <p className="text-xs tracking-widest text-teal">ACADEMIC SUCCESS HUB</p>
+          <h1 className="text-2xl font-bold text-teal mt-1">
+            {profile.fullName ? `Welcome back, ${profile.fullName.split(" ")[0]}` : "Welcome back"}
+          </h1>
+        </div>
+        <StreakBadge currentStreak={profile.currentStreak} points={profile.points} />
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
         <Link
           href="/academic/courses"
           className="rounded-xl border border-border-light bg-white p-4 hover:border-teal transition flex flex-col items-center text-center gap-2"
         >
           <BookOpen className="text-teal" size={20} />
           <p className="text-xs font-medium text-teal">Course Catalog</p>
+        </Link>
+        <Link
+          href="/academic/mastery"
+          className="rounded-xl border border-border-light bg-white p-4 hover:border-teal transition flex flex-col items-center text-center gap-2"
+        >
+          <Map className="text-teal" size={20} />
+          <p className="text-xs font-medium text-teal">Mastery Map</p>
         </Link>
         <Link
           href="/academic/cbt"

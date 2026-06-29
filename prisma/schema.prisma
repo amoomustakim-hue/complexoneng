@@ -125,6 +125,10 @@ model Profile {
   mentorExpertise String?
   portfolioSlug   String?        @unique
   portfolioPublic Boolean        @default(false)
+  points          Int            @default(0)
+  currentStreak   Int            @default(0)
+  longestStreak   Int            @default(0)
+  lastActivityAt  DateTime?
   onboarded       Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
