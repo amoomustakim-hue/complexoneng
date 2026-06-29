@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BookOpen, ClipboardList, Sparkles, LineChart } from "lucide-react";
+import { LayoutDashboard, BookOpen, ClipboardList, Sparkles, LineChart, Map } from "lucide-react";
 
 const links = [
   { href: "/academic", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/academic/courses", label: "My Courses", icon: BookOpen },
+  { href: "/academic/mastery", label: "Mastery Map", icon: Map },
   { href: "/academic/cbt", label: "CBT Practice", icon: ClipboardList },
   { href: "/academic/coach", label: "AI Coach", icon: Sparkles },
   { href: "/academic/dashboard", label: "Performance", icon: LineChart },
