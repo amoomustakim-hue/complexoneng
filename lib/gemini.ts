@@ -35,6 +35,18 @@ export function getLessonHelperModel(lessonTitle: string, lessonContent: string)
   });
 }
 
+export function getCareerCounsellorModel() {
+  return genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction:
+      "You are ComplexOne's AI Career Counsellor for Nigerian students. " +
+      "Based on a student's quiz answers and top career matches, write a personalised 2-paragraph " +
+      "explanation of why these careers suit them. Reference their specific answer patterns. " +
+      "Be encouraging, realistic, and grounded in Nigerian career context. " +
+      "Write directly to the student ('You', not 'The student'). Keep it under 150 words total.",
+  });
+}
+
 export function getResearchAssistantModel() {
   return genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
