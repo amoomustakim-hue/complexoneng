@@ -67,6 +67,12 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-2">
           <Link
+            href="/become-a-mentor"
+            className="text-sm text-cream/70 hover:text-lime px-4 py-2 rounded-full transition hidden lg:block"
+          >
+            Become a mentor
+          </Link>
+          <Link
             href="/sign-in"
             className="text-sm font-semibold text-cream/90 px-4 py-2 rounded-full hover:bg-white/5 transition"
           >
@@ -109,6 +115,13 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
+          <Link
+            href="/become-a-mentor"
+            className="text-sm text-cream/70"
+            onClick={() => setOpen(false)}
+          >
+            Become a mentor
+          </Link>
           <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
             <Link
               href="/sign-in"
