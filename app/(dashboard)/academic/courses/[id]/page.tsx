@@ -146,6 +146,18 @@ export default async function CoursePlayerPage({
           <p className="text-sm text-muted">{currentLesson.textContent}</p>
         </div>
 
+        {currentLesson.pdfUrl && (
+          <a
+            href={currentLesson.pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-teal border border-border-light px-4 py-2 rounded-lg mt-4 hover:bg-cream transition"
+          >
+            <FileText size={16} />
+            View lesson PDF
+          </a>
+        )}
+
         <div className="flex items-center justify-between mt-8">
           <MarkCompleteButton
             lessonId={currentLesson.id}
