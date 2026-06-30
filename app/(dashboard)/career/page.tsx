@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Compass, Award, GraduationCap, CalendarClock } from "lucide-react";
+import { Compass, Award, GraduationCap, CalendarClock, Briefcase, FileText } from "lucide-react";
 import { getCurrentProfile } from "@/lib/profile";
 import { prisma } from "@/lib/prisma";
 import { CAREER_INFO, type CareerCategory } from "@/lib/career-quiz";
@@ -75,6 +75,27 @@ export default async function CareerPage() {
       body: "Browse programs and track your applications on a Kanban board.",
       cta: appCount > 0 ? `${appCount} tracked` : "Add an application",
     },
+    {
+      href: "/career/internships",
+      icon: Briefcase,
+      title: "Internship Opportunities",
+      body: "Browse vetted internships with AI-match badges and industry filters.",
+      cta: "Find internships",
+    },
+    {
+      href: "/career/internships/tracker",
+      icon: Briefcase,
+      title: "Internship Tracker",
+      body: "Log your internship applications and track them through Applied → Interview → Offer.",
+      cta: "Track applications",
+    },
+    {
+      href: "/career/cv-builder",
+      icon: FileText,
+      title: "CV & Cover Letter Generator",
+      body: "Get a tailored professional summary and cover letter for your internship applications.",
+      cta: "Generate now",
+    },
   ];
 
   return (
@@ -115,7 +136,7 @@ export default async function CareerPage() {
         );
       })()}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {modules.map((m) => {
           const Icon = m.icon;
           return (

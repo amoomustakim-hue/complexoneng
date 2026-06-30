@@ -65,6 +65,13 @@ enum ResearchRequestStatus {
   COMPLETED
 }
 
+enum InternshipStatus {
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+}
+
 enum InventoryCategory {
   TEXTBOOK
   LAPTOP
@@ -139,8 +146,9 @@ model Profile {
   coachSessions          CoachSession[]
   careerResults          CareerResult[]
   universityApplications UniversityApplication[]
-  researchRequests       ResearchRequest[]
-  researchOffers         ResearchOffer[]
+  researchRequests          ResearchRequest[]
+  researchOffers            ResearchOffer[]
+  internshipApplications    InternshipApplication[]
   orders                 Order[]
   communityMemberships   CommunityMembership[]
   communityPosts         CommunityPost[]
@@ -295,6 +303,24 @@ model ResearchOffer {
   @@index([requestId])
   @@index([profileId])
   @@map("research_offers")
+}
+
+model InternshipApplication {
+  id        String           @id @default(cuid())
+  profileId String
+  profile   Profile          @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  company   String
+  role      String
+  industry  String?
+  location  String?
+  status    InternshipStatus @default(APPLIED)
+  deadline  DateTime?
+  notes     String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([profileId])
+  @@map("internship_applications")
 }
 
 model InventoryItem {
