@@ -47,6 +47,42 @@ export function getCareerCounsellorModel() {
   });
 }
 
+export function getProposalDraftModel() {
+  return genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction:
+      "You are ComplexOne's Research Proposal Drafter for Nigerian postgraduate students. " +
+      "Given a student's inputs (title, background, research questions, objectives, methodology, significance), " +
+      "produce a well-structured academic research proposal with clearly labelled sections. " +
+      "Use formal academic language appropriate for Nigerian universities. " +
+      "Keep the total under 600 words. Do not add extra commentary — output only the proposal text.",
+  });
+}
+
+export function getCVBuilderModel() {
+  return genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction:
+      "You are ComplexOne's CV & Cover Letter Assistant for Nigerian students seeking internships. " +
+      "Given a student's course, year, skills, and target role, produce: " +
+      "1) A 3-sentence Professional Summary suitable for a Nigerian CV; " +
+      "2) A tailored cover letter opening paragraph (4-6 sentences) for the target role. " +
+      "Be professional, confident, and specific to the Nigerian employment context. " +
+      "Format your response as JSON with keys 'summary' and 'coverLetter'.",
+    generationConfig: { responseMimeType: "application/json" },
+  });
+}
+
+export function getCitationModel() {
+  return genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction:
+      "You format academic citations. Given source details and a citation style (APA, MLA, Harvard, or Vancouver), " +
+      "return only the correctly formatted citation string — nothing else. " +
+      "Follow the exact formatting rules for the requested style.",
+  });
+}
+
 export function getResearchAssistantModel() {
   return genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
