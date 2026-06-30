@@ -3,21 +3,21 @@ import { Search } from "lucide-react";
 import { Twitter, Instagram, Linkedin } from "@/components/landing/social-icons";
 
 const moduleLinks = [
-  { label: "Academic Success", href: "/dashboard" },
-  { label: "Career & Future", href: "/career" },
-  { label: "Research Support", href: "/research" },
+  { label: "Academic Success", href: "/modules/academic-success" },
+  { label: "Career & Future", href: "/modules/career-future" },
+  { label: "Research Support", href: "/modules/research-support" },
 ];
 
 const platformLinks = [
-  { label: "Features", href: "#features" },
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Features", href: "/#features" },
+  { label: "How it Works", href: "/#how-it-works" },
+  { label: "Pricing", href: "/#pricing" },
 ];
 
 const companyLinks = [
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
-  { label: "Privacy", href: "#privacy" },
+  { label: "About", href: "/about" },
+  { label: "Founder", href: "/founder" },
+  { label: "Privacy", href: "/#privacy" },
 ];
 
 export default function Footer() {
@@ -51,17 +51,17 @@ export default function Footer() {
             <div className="flex flex-col gap-2">
               <p className="font-semibold text-cream">Platform</p>
               {platformLinks.map((link) => (
-                <a key={link.label} href={link.href} className="hover:text-lime transition-colors">
+                <Link key={link.label} href={link.href} className="hover:text-lime transition-colors">
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
             <div className="flex flex-col gap-2">
               <p className="font-semibold text-cream">Company</p>
               {companyLinks.map((link) => (
-                <a key={link.label} href={link.href} className="hover:text-lime transition-colors">
+                <Link key={link.label} href={link.href} className="hover:text-lime transition-colors">
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

@@ -6,10 +6,10 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu, X, Search } from "lucide-react";
 
 const links = [
-  { label: "Home", href: "#home" },
-  { label: "Features", href: "#features" },
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "About", href: "#about" },
+  { label: "Home", href: "/#home" },
+  { label: "Features", href: "/#features" },
+  { label: "How it Works", href: "/#how-it-works" },
+  { label: "About", href: "/about" },
 ];
 
 export default function Navbar() {
