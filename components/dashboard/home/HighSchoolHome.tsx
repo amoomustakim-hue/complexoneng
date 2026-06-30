@@ -66,7 +66,7 @@ export default function HighSchoolHome({
       </div>
 
       <Link
-        href="/academic/dashboard"
+        href="/academic"
         className="block text-sm text-teal underline mt-4"
       >
         View your full performance dashboard →
