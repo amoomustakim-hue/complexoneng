@@ -1,5 +1,12 @@
+import Link from "next/link";
 import { Search } from "lucide-react";
 import { Twitter, Instagram, Linkedin } from "@/components/landing/social-icons";
+
+const moduleLinks = [
+  { label: "Academic Success", href: "/dashboard" },
+  { label: "Career & Future", href: "/career" },
+  { label: "Research Support", href: "/research" },
+];
 
 const platformLinks = [
   { label: "Features", href: "#features" },
@@ -27,10 +34,20 @@ export default function Footer() {
               </span>
               <p className="font-bold text-cream text-xl">ComplexOne</p>
             </div>
-            <p className="text-sm text-cream/60 mt-2">One platform. Every student journey.</p>
+            <p className="text-sm text-cream/60 mt-2 max-w-xs">
+              One platform. Every student journey.
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-12 text-sm text-cream/70">
+          <div className="grid grid-cols-3 gap-8 sm:gap-12 text-sm text-cream/70">
+            <div className="flex flex-col gap-2">
+              <p className="font-semibold text-cream">Modules</p>
+              {moduleLinks.map((link) => (
+                <Link key={link.label} href={link.href} className="hover:text-lime transition-colors">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
             <div className="flex flex-col gap-2">
               <p className="font-semibold text-cream">Platform</p>
               {platformLinks.map((link) => (

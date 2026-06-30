@@ -1,15 +1,7 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
-import {
-  BookOpen,
-  Briefcase,
-  FlaskConical,
-  ShoppingBag,
-  Users,
-  IdCard,
-  type LucideIcon,
-} from "lucide-react";
+import { ShoppingBag, Users, IdCard, type LucideIcon } from "lucide-react";
 
 type Feature = {
   phase: string;
@@ -19,24 +11,6 @@ type Feature = {
 };
 
 const features: Feature[] = [
-  {
-    phase: "Phase 1",
-    icon: BookOpen,
-    title: "Academic Success Hub",
-    body: "Personal AI coach, CBT mock exams for JAMB, WAEC, NECO, and Post-UTME with performance tracking.",
-  },
-  {
-    phase: "Phase 2",
-    icon: Briefcase,
-    title: "Career & Future Planning",
-    body: "Career discovery engine, scholarship portal, and university admission navigator for Nigerian and international schools.",
-  },
-  {
-    phase: "Phase 3",
-    icon: FlaskConical,
-    title: "Research Support",
-    body: "Proposal guidance, data analysis support, and a research marketplace connecting students with analysts and supervisors.",
-  },
   {
     phase: "Phase 4",
     icon: ShoppingBag,
@@ -68,7 +42,7 @@ const cardVariants: Variants = {
 
 export default function Features() {
   return (
-    <section id="features" className="relative bg-cream py-28 overflow-hidden">
+    <section className="relative bg-cream py-28 overflow-hidden">
       <div className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-teal/10 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full bg-lime/20 blur-3xl" />
 
@@ -79,7 +53,7 @@ export default function Features() {
           viewport={{ once: true }}
           className="text-xs tracking-widest text-teal text-center"
         >
-          WHAT&apos;S INSIDE
+          AND THERE&apos;S MORE
         </motion.p>
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
@@ -88,10 +62,10 @@ export default function Features() {
           transition={{ delay: 0.1 }}
           className="text-4xl font-bold text-teal text-center mt-3"
         >
-          Everything a student needs, in one place
+          Beyond the classroom
         </motion.h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 max-w-4xl mx-auto">
           {features.map((feature, i) => {
             const Icon = feature.icon;
             return (
