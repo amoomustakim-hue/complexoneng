@@ -18,11 +18,23 @@ export async function getOrCreateProfile() {
   const user = await currentUser();
   const email = user?.emailAddresses[0]?.emailAddress ?? "";
 
+  const approvedMentorApplication = email
+    ? await prisma.mentorApplication.findFirst({
+        where: { email: email.toLowerCase(), status: "APPROVED" },
+        orderBy: { createdAt: "desc" },
+      })
+    : null;
+
   return prisma.profile.create({
     data: {
       clerkUserId: userId,
       email,
       fullName: user ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() : null,
+      ...(approvedMentorApplication && {
+        isMentor: true,
+        mentorBio: approvedMentorApplication.bio,
+        mentorExpertise: approvedMentorApplication.expertise,
+      }),
     },
   });
 }

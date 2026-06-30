@@ -27,6 +27,9 @@ export default async function AdminLayout({
         <Link href="/admin/orders" className="text-sm text-muted hover:text-teal">
           Orders
         </Link>
+        <Link href="/admin/mentors" className="text-sm text-muted hover:text-teal">
+          Mentors
+        </Link>
       </div>
       {children}
     </div>
