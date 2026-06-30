@@ -13,10 +13,22 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
-      <div className="flex items-center gap-4 mb-6">
+    <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6">
         <Link href="/admin" className="text-sm font-semibold text-teal">
           Admin
+        </Link>
+        <Link href="/admin/courses" className="text-sm text-muted hover:text-teal">
+          Courses
+        </Link>
+        <Link href="/admin/questions" className="text-sm text-muted hover:text-teal">
+          Questions
+        </Link>
+        <Link href="/admin/opportunities" className="text-sm text-muted hover:text-teal">
+          Opportunities
+        </Link>
+        <Link href="/admin/programs" className="text-sm text-muted hover:text-teal">
+          Programs
         </Link>
         <Link href="/admin/inventory" className="text-sm text-muted hover:text-teal">
           Inventory

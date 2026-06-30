@@ -578,6 +578,7 @@ model Lesson {
   contentType ContentType @default(TEXT)
   textContent String?
   videoUrl    String?
+  pdfUrl      String?
   createdAt   DateTime    @default(now())
 
   progress  LessonProgress[]
