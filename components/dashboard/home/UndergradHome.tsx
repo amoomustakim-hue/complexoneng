@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Briefcase, FlaskConical, ShoppingBag, Users, IdCard } from "lucide-react";
+import { BookOpen, Briefcase, FlaskConical, ShoppingBag, Users, IdCard, Flame, Star } from "lucide-react";
 
 const modules = [
   {
@@ -43,9 +43,15 @@ const modules = [
 export default function UndergradHome({
   firstName,
   courseOfStudy,
+  points,
+  streak,
+  enrolledCourses,
 }: {
   firstName: string;
   courseOfStudy?: string | null;
+  points: number;
+  streak: number;
+  enrolledCourses: number;
 }) {
   return (
     <div className="max-w-3xl mx-auto px-6 py-8">
@@ -54,6 +60,23 @@ export default function UndergradHome({
         {firstName ? `Hi, ${firstName}` : "Hi there"}
       </h1>
       {courseOfStudy && <p className="text-sm text-muted mt-1">{courseOfStudy}</p>}
+
+      <div className="flex items-center gap-4 mt-4 flex-wrap">
+        <span className="flex items-center gap-1.5 text-sm font-semibold text-teal">
+          <Star size={15} className="text-lime fill-lime" />
+          {points.toLocaleString()} pts
+        </span>
+        <span className="flex items-center gap-1.5 text-sm font-semibold text-teal">
+          <Flame size={15} className="text-orange-400" />
+          {streak}-day streak
+        </span>
+        {enrolledCourses > 0 && (
+          <Link href="/academic/courses" className="flex items-center gap-1.5 text-sm font-semibold text-teal hover:text-lime transition-colors">
+            <BookOpen size={15} />
+            {enrolledCourses} course{enrolledCourses === 1 ? "" : "s"} enrolled
+          </Link>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
         {modules.map((m) => {

@@ -20,5 +20,24 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     data: { status },
   });
 
+  // Sync isMentor on the matching Profile so the mentor immediately appears
+  // (or disappears) in the student-facing mentor browser.
+  if (status === "APPROVED") {
+    await prisma.profile.updateMany({
+      where: { email: application.email },
+      data: {
+        isMentor: true,
+        mentorBio: application.bio,
+        mentorExpertise: application.expertise,
+      },
+    });
+  } else {
+    // REJECTED or reset to PENDING — revoke mentor status
+    await prisma.profile.updateMany({
+      where: { email: application.email },
+      data: { isMentor: false },
+    });
+  }
+
   return NextResponse.json({ application });
 }

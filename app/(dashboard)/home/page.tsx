@@ -40,5 +40,15 @@ export default async function HomePage() {
     );
   }
 
-  return <UndergradHome firstName={firstName} courseOfStudy={profile.courseOfStudy} />;
+  const enrolledCount = await prisma.enrollment.count({ where: { profileId: profile.id } });
+
+  return (
+    <UndergradHome
+      firstName={firstName}
+      courseOfStudy={profile.courseOfStudy}
+      points={profile.points}
+      streak={profile.currentStreak}
+      enrolledCourses={enrolledCount}
+    />
+  );
 }
