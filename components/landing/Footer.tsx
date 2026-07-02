@@ -6,6 +6,7 @@ const moduleLinks = [
   { label: "Academic Success", href: "/modules/academic-success" },
   { label: "Career & Future", href: "/modules/career-future" },
   { label: "Research Support", href: "/modules/research-support" },
+  { label: "Mentor Network", href: "/modules/mentor-network" },
 ];
 
 const platformLinks = [

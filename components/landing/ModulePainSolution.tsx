@@ -15,6 +15,7 @@ import {
   FileText,
   Quote,
   Users,
+  MessageSquare,
   type LucideIcon,
 } from "lucide-react";
 
@@ -29,6 +30,7 @@ const ICONS = {
   FileText,
   Quote,
   Users,
+  MessageSquare,
 } satisfies Record<string, LucideIcon>;
 
 type SolutionPoint = {
