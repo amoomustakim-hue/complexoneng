@@ -9,7 +9,7 @@ export default async function ResearchMarketplacePage() {
     redirect("/sign-in");
   }
 
-  const [open, mine] = await Promise.all([
+  const [open, mine, myOffers] = await Promise.all([
     prisma.researchRequest.findMany({
       where: { status: "OPEN", profileId: { not: profile.id } },
       orderBy: { createdAt: "desc" },
@@ -21,6 +21,11 @@ export default async function ResearchMarketplacePage() {
       include: {
         offers: { orderBy: { createdAt: "desc" }, include: { profile: true } },
       },
+    }),
+    prisma.researchOffer.findMany({
+      where: { profileId: profile.id },
+      orderBy: { createdAt: "desc" },
+      include: { request: true },
     }),
   ]);
 
@@ -50,9 +55,21 @@ export default async function ResearchMarketplacePage() {
             offers: r.offers.map((o) => ({
               id: o.id,
               message: o.message,
+              status: o.status,
               createdAt: o.createdAt.toISOString(),
               profile: { fullName: o.profile.fullName, email: o.profile.email },
             })),
+          }))}
+          initialMyOffers={myOffers.map((o) => ({
+            id: o.id,
+            message: o.message,
+            status: o.status,
+            createdAt: o.createdAt.toISOString(),
+            request: {
+              id: o.request.id,
+              title: o.request.title,
+              status: o.request.status,
+            },
           }))}
         />
       </div>
