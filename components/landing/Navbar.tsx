@@ -9,7 +9,6 @@ const links = [
   { label: "Home", href: "/#home" },
   { label: "Features", href: "/#features" },
   { label: "How it Works", href: "/#how-it-works" },
-  { label: "About", href: "/about" },
 ];
 
 const moduleLinks = [
@@ -19,12 +18,22 @@ const moduleLinks = [
   { label: "Mentor Network", href: "/modules/mentor-network", desc: "Find or become a mentor" },
 ];
 
+const companyLinks = [
+  { label: "About", href: "/about", desc: "Our mission and story" },
+  { label: "Founder", href: "/founder", desc: "Meet the founder" },
+  { label: "Become a mentor", href: "/become-a-mentor", desc: "Join the mentor network" },
+  { label: "Privacy", href: "/#privacy", desc: "How we handle your data" },
+];
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [modulesOpen, setModulesOpen] = useState(false);
+  const [companyOpen, setCompanyOpen] = useState(false);
   const [mobileModulesOpen, setMobileModulesOpen] = useState(false);
+  const [mobileCompanyOpen, setMobileCompanyOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const companyRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -39,11 +48,14 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setModulesOpen(false);
+      }
+      if (companyRef.current && !companyRef.current.contains(e.target as Node)) {
+        setCompanyOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -63,7 +75,7 @@ export default function Navbar() {
           paddingBottom: scrolled ? 6 : 10,
         }}
         transition={{ duration: 0.3 }}
-        className={`mx-auto max-w-5xl rounded-full border border-white/10 bg-teal-deep/70 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between shadow-glass-lg transition-shadow ${
+        className={`mx-auto max-w-6xl rounded-full border border-white/10 bg-teal-deep/70 backdrop-blur-xl px-6 sm:px-8 flex items-center justify-between shadow-glass-lg transition-shadow ${
           scrolled ? "shadow-glass-lg" : "shadow-glass"
         }`}
       >
@@ -74,7 +86,7 @@ export default function Navbar() {
           <span className="font-bold text-cream text-base sm:text-lg">ComplexOne</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-7">
+        <nav className="hidden md:flex items-center gap-9">
           {links.map((link) => (
             <a
               key={link.href}
@@ -134,18 +146,62 @@ export default function Navbar() {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Company dropdown */}
+          <div
+            ref={companyRef}
+            className="relative"
+            onMouseEnter={() => setCompanyOpen(true)}
+            onMouseLeave={() => setCompanyOpen(false)}
+          >
+            <button
+              onClick={() => setCompanyOpen((v) => !v)}
+              className="flex items-center gap-1 text-sm text-cream/80 hover:text-lime transition-colors"
+            >
+              Company
+              <motion.span
+                animate={{ rotate: companyOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+                className="inline-flex"
+              >
+                <ChevronDown size={14} />
+              </motion.span>
+            </button>
+
+            <AnimatePresence>
+              {companyOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.97 }}
+                  transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-52 rounded-2xl border border-white/10 bg-teal-deep/95 backdrop-blur-xl shadow-glass-lg overflow-hidden"
+                >
+                  <div className="p-1.5 flex flex-col gap-0.5">
+                    {companyLinks.map((m) => (
+                      <Link
+                        key={m.href}
+                        href={m.href}
+                        onClick={() => setCompanyOpen(false)}
+                        className="group flex flex-col px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors"
+                      >
+                        <span className="text-sm font-medium text-cream/90 group-hover:text-lime transition-colors">
+                          {m.label}
+                        </span>
+                        <span className="text-xs text-cream/45 mt-0.5">{m.desc}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </nav>
 
-        <div className="hidden md:flex items-center gap-2">
-          <Link
-            href="/become-a-mentor"
-            className="text-sm text-cream/70 hover:text-lime px-4 py-2 rounded-full transition hidden lg:block"
-          >
-            Become a mentor
-          </Link>
+        <div className="hidden md:flex items-center gap-3">
           <Link
             href="/sign-in"
-            className="text-sm font-semibold text-cream/90 px-4 py-2 rounded-full hover:bg-white/5 transition"
+            className="text-sm font-semibold text-cream/90 px-5 py-2 rounded-full hover:bg-white/5 transition"
           >
             Sign in
           </Link>
@@ -175,7 +231,7 @@ export default function Navbar() {
           initial={{ opacity: 0, y: -10, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.25 }}
-          className="md:hidden mx-auto max-w-5xl mt-3 rounded-3xl border border-white/10 bg-teal-deep/90 backdrop-blur-xl shadow-glass-lg px-6 py-5 flex flex-col gap-4"
+          className="md:hidden mx-auto max-w-6xl mt-3 rounded-3xl border border-white/10 bg-teal-deep/90 backdrop-blur-xl shadow-glass-lg px-6 py-5 flex flex-col gap-4"
         >
           {links.map((link) => (
             <a
@@ -228,13 +284,46 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          <Link
-            href="/become-a-mentor"
-            className="text-sm text-cream/70"
-            onClick={() => setMobileOpen(false)}
-          >
-            Become a mentor
-          </Link>
+          {/* Mobile company expand */}
+          <div>
+            <button
+              onClick={() => setMobileCompanyOpen((v) => !v)}
+              className="flex items-center justify-between w-full text-sm text-cream/90"
+            >
+              Company
+              <motion.span
+                animate={{ rotate: mobileCompanyOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronDown size={14} />
+              </motion.span>
+            </button>
+            <AnimatePresence>
+              {mobileCompanyOpen && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="flex flex-col gap-1 mt-2 pl-3 border-l border-white/10">
+                    {companyLinks.map((m) => (
+                      <Link
+                        key={m.href}
+                        href={m.href}
+                        className="text-sm text-cream/70 hover:text-lime py-1.5 transition-colors"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {m.label}
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
             <Link
               href="/sign-in"
