@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { Menu, X, Search } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { Menu, X, Search, ChevronDown } from "lucide-react";
 
 const links = [
   { label: "Home", href: "/#home" },
@@ -12,9 +12,19 @@ const links = [
   { label: "About", href: "/about" },
 ];
 
+const moduleLinks = [
+  { label: "Academic Success", href: "/modules/academic-success", desc: "CBT, courses & AI coach" },
+  { label: "Career & Future", href: "/modules/career-future", desc: "Scholarships & admissions" },
+  { label: "Research Support", href: "/modules/research-support", desc: "Proposals & citations" },
+  { label: "Mentor Network", href: "/modules/mentor-network", desc: "Find or become a mentor" },
+];
+
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [modulesOpen, setModulesOpen] = useState(false);
+  const [mobileModulesOpen, setMobileModulesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -22,12 +32,23 @@ export default function Navbar() {
   });
 
   useEffect(() => {
-    if (open) document.body.style.overflow = "hidden";
+    if (mobileOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, [mobileOpen]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setModulesOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   return (
     <motion.div
@@ -63,6 +84,56 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
+
+          {/* Modules dropdown */}
+          <div
+            ref={dropdownRef}
+            className="relative"
+            onMouseEnter={() => setModulesOpen(true)}
+            onMouseLeave={() => setModulesOpen(false)}
+          >
+            <button
+              onClick={() => setModulesOpen((v) => !v)}
+              className="flex items-center gap-1 text-sm text-cream/80 hover:text-lime transition-colors"
+            >
+              Modules
+              <motion.span
+                animate={{ rotate: modulesOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+                className="inline-flex"
+              >
+                <ChevronDown size={14} />
+              </motion.span>
+            </button>
+
+            <AnimatePresence>
+              {modulesOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.97 }}
+                  transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-60 rounded-2xl border border-white/10 bg-teal-deep/95 backdrop-blur-xl shadow-glass-lg overflow-hidden"
+                >
+                  <div className="p-1.5 flex flex-col gap-0.5">
+                    {moduleLinks.map((m) => (
+                      <Link
+                        key={m.href}
+                        href={m.href}
+                        onClick={() => setModulesOpen(false)}
+                        className="group flex flex-col px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors"
+                      >
+                        <span className="text-sm font-medium text-cream/90 group-hover:text-lime transition-colors">
+                          {m.label}
+                        </span>
+                        <span className="text-xs text-cream/45 mt-0.5">{m.desc}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
@@ -91,14 +162,15 @@ export default function Navbar() {
 
         <button
           className="md:hidden text-cream"
-          onClick={() => setOpen(!open)}
+          onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </motion.header>
 
-      {open && (
+      {/* Mobile menu */}
+      {mobileOpen && (
         <motion.div
           initial={{ opacity: 0, y: -10, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -110,15 +182,56 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               className="text-sm text-cream/90"
-              onClick={() => setOpen(false)}
+              onClick={() => setMobileOpen(false)}
             >
               {link.label}
             </a>
           ))}
+
+          {/* Mobile modules expand */}
+          <div>
+            <button
+              onClick={() => setMobileModulesOpen((v) => !v)}
+              className="flex items-center justify-between w-full text-sm text-cream/90"
+            >
+              Modules
+              <motion.span
+                animate={{ rotate: mobileModulesOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronDown size={14} />
+              </motion.span>
+            </button>
+            <AnimatePresence>
+              {mobileModulesOpen && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="flex flex-col gap-1 mt-2 pl-3 border-l border-white/10">
+                    {moduleLinks.map((m) => (
+                      <Link
+                        key={m.href}
+                        href={m.href}
+                        className="text-sm text-cream/70 hover:text-lime py-1.5 transition-colors"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {m.label}
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <Link
             href="/become-a-mentor"
             className="text-sm text-cream/70"
-            onClick={() => setOpen(false)}
+            onClick={() => setMobileOpen(false)}
           >
             Become a mentor
           </Link>
