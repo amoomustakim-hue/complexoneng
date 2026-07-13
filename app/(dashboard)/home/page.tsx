@@ -1,14 +1,21 @@
 import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/profile";
+import { isAdminEmail } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import HighSchoolHome from "@/components/dashboard/home/HighSchoolHome";
 import UndergradHome from "@/components/dashboard/home/UndergradHome";
 import ResearcherHome from "@/components/dashboard/home/ResearcherHome";
+import JambHome from "@/components/dashboard/home/JambHome";
 
 export default async function HomePage() {
   const profile = await getCurrentProfile();
   if (!profile) {
     redirect("/sign-in");
+  }
+
+  // Admin users go straight to the admin panel (check DB flag + env bootstrap)
+  if (profile.isAdmin || isAdminEmail(profile.email)) {
+    redirect("/admin");
   }
 
   const firstName = profile.fullName?.split(" ")[0] ?? "";
@@ -29,6 +36,17 @@ export default async function HomePage() {
     const avgScore = attempts
       ? Math.round((sessions.reduce((acc, s) => acc + s.score / s.total, 0) / attempts) * 100)
       : 0;
+
+    // JAMB candidates get a dedicated home with UTME countdown + subject picker
+    if (profile.level === "JAMB") {
+      return (
+        <JambHome
+          firstName={firstName}
+          attempts={attempts}
+          avgScore={avgScore}
+        />
+      );
+    }
 
     return (
       <HighSchoolHome
