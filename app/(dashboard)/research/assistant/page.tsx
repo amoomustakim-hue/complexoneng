@@ -13,8 +13,8 @@ export default async function ResearchAssistantPage() {
   const messages = (session.messages as { role: "user" | "model"; content: string }[]) ?? [];
 
   return (
-    <div>
-      <div className="px-6 pt-6">
+    <div className="flex flex-col h-[calc(100vh-3.5rem)]">
+      <div className="px-6 pt-6 pb-2 shrink-0">
         <p className="text-xs tracking-widest text-teal">RESEARCH SUPPORT CENTRE</p>
         <h1 className="text-2xl font-bold text-teal mt-1">Research assistant</h1>
       </div>
@@ -23,6 +23,7 @@ export default async function ResearchAssistantPage() {
         endpoint="/api/ai/research"
         placeholder="Ask about your proposal, methodology, or analysis..."
         emptyHint="Ask about proposal structure, methodology, data analysis, or referencing."
+        heightClassName="flex-1"
       />
     </div>
   );

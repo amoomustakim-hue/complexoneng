@@ -8,6 +8,9 @@ const VALID_LEVELS = ["SS1", "SS2", "SS3", "JAMB", "L100", "L200", "L300", "L400
 const VALID_EXAMS = ["JAMB", "WAEC", "NECO", "POST_UTME"];
 
 type OnboardingBody = {
+  fullName?: string;
+  dateOfBirth?: string | null;
+  avatarUrl?: string | null;
   track?: string;
   level?: string;
   school?: string;
@@ -24,7 +27,18 @@ export async function POST(req: Request) {
   }
 
   const body = (await req.json()) as OnboardingBody;
-  const { track, level, school, targetExam, courseOfStudy, researchArea, researchStage } = body;
+  const {
+    fullName,
+    dateOfBirth,
+    avatarUrl,
+    track,
+    level,
+    school,
+    targetExam,
+    courseOfStudy,
+    researchArea,
+    researchStage,
+  } = body;
 
   if (!track || !VALID_TRACKS.includes(track)) {
     return NextResponse.json({ error: "Invalid track" }, { status: 400 });
@@ -45,6 +59,9 @@ export async function POST(req: Request) {
   const profile = await prisma.profile.update({
     where: { clerkUserId: userId },
     data: {
+      fullName: fullName?.trim() || undefined,
+      dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+      avatarUrl: avatarUrl ?? null,
       track: track as never,
       level: level as never,
       school: school?.trim() || null,

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { NAV_MODULES, getNavOrder, type Track } from "@/lib/dashboard-nav";
+import SignOutButton from "@/components/dashboard/SignOutButton";
 
 export default function DashboardHeader({ track }: { track?: Track }) {
   const pathname = usePathname();
@@ -33,7 +34,10 @@ export default function DashboardHeader({ track }: { track?: Track }) {
         })}
       </nav>
 
-      <UserButton afterSignOutUrl="/" />
+      <div className="flex items-center gap-3">
+        <SignOutButton />
+        <UserButton afterSignOutUrl="/sign-in" />
+      </div>
     </header>
   );
 }
