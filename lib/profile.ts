@@ -12,11 +12,25 @@ export async function getOrCreateProfile() {
   const { userId } = await auth();
   if (!userId) return null;
 
+  // Fast path: profile already linked to this Clerk userId
   const existing = await prisma.profile.findUnique({ where: { clerkUserId: userId } });
   if (existing) return existing;
 
   const user = await currentUser();
   const email = user?.emailAddresses[0]?.emailAddress ?? "";
+
+  // Handle dev→prod migration: same email, different Clerk userId (different environments)
+  // Clerk Dev and Clerk Prod generate different user IDs for the same account.
+  // If a profile with this email already exists, re-link it to the production userId.
+  if (email) {
+    const byEmail = await prisma.profile.findUnique({ where: { email } });
+    if (byEmail) {
+      return prisma.profile.update({
+        where: { email },
+        data: { clerkUserId: userId },
+      });
+    }
+  }
 
   const approvedMentorApplication = email
     ? await prisma.mentorApplication.findFirst({
