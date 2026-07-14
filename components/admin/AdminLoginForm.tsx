@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLoginForm() {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -17,11 +16,11 @@ export default function AdminLoginForm() {
       const res = await fetch("/api/admin/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ password }),
       });
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error ?? "Invalid credentials");
+        setError(data.error ?? "Invalid password");
       } else {
         router.push("/admin");
         router.refresh();
@@ -36,23 +35,13 @@ export default function AdminLoginForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-muted">Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          autoComplete="email"
-          className="rounded-lg border border-border-light px-3 py-2 text-sm focus:outline-none focus:border-teal"
-        />
-      </div>
-      <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-muted">Password</label>
+        <label className="text-xs font-medium text-muted">Admin password</label>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          autoFocus
           autoComplete="current-password"
           className="rounded-lg border border-border-light px-3 py-2 text-sm focus:outline-none focus:border-teal"
         />
