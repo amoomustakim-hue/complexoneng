@@ -11,6 +11,8 @@ const isPublicRoute = createRouteMatcher([
   "/about",
   "/founder",
   "/modules/(.*)",
+  "/admin(.*)",
+  "/api/admin(.*)",
   "/api/whatsapp/(.*)",
   "/api/paystack/(.*)",
   "/api/public/(.*)",

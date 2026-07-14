@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
 import { getCurrentProfile } from "@/lib/profile";
-import { isAdminUser } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import HighSchoolHome from "@/components/dashboard/home/HighSchoolHome";
 import UndergradHome from "@/components/dashboard/home/UndergradHome";
@@ -9,15 +7,9 @@ import ResearcherHome from "@/components/dashboard/home/ResearcherHome";
 import JambHome from "@/components/dashboard/home/JambHome";
 
 export default async function HomePage() {
-  const { userId } = await auth();
   const profile = await getCurrentProfile();
   if (!profile) {
     redirect("/sign-in");
-  }
-
-  // Admin users go straight to the admin panel (DB flag, ADMIN_EMAILS, or ADMIN_CLERK_USER_IDS)
-  if (profile.isAdmin || isAdminUser(profile.email, userId ?? undefined)) {
-    redirect("/admin");
   }
 
   const firstName = profile.fullName?.split(" ")[0] ?? "";
