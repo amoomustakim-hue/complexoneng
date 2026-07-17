@@ -10,17 +10,25 @@ export function computeAdminToken(): string {
 }
 
 export async function isAdminCookieValid(): Promise<boolean> {
-  const store = await cookies();
+  const store = cookies();
   const token = store.get("admin_session")?.value ?? "";
   const expected = computeAdminToken();
   return !!expected && token === expected;
+}
+
+function getAdminEmail(): string {
+  // Accept ADMIN_EMAIL (current) or ADMIN_EMAILS (legacy — first entry)
+  const single = (process.env.ADMIN_EMAIL ?? "").trim();
+  if (single) return single.toLowerCase();
+  const legacy = (process.env.ADMIN_EMAILS ?? "").split(",")[0].trim();
+  return legacy.toLowerCase();
 }
 
 // Returns true only if the currently signed-in Clerk account matches ADMIN_EMAIL
 export async function isAdminClerkUser(): Promise<boolean> {
   const { userId } = await auth();
   if (!userId) return false;
-  const adminEmail = (process.env.ADMIN_EMAIL ?? "").toLowerCase().trim();
+  const adminEmail = getAdminEmail();
   if (!adminEmail) return false;
   const user = await currentUser();
   if (!user) return false;
