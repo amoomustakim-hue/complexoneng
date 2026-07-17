@@ -1,21 +1,20 @@
 import { NextResponse } from "next/server";
-import { computeAdminToken } from "@/lib/admin-auth";
+import { computeAdminToken, isAdminClerkUser } from "@/lib/admin-auth";
 
 export async function POST(req: Request) {
-  const adminEmail = (process.env.ADMIN_EMAIL || process.env.ADMIN_EMAILS?.split(",")[0] || "").trim().toLowerCase();
-  const adminPassword = (process.env.ADMIN_PASSWORD ?? "").trim();
+  const isAdmin = await isAdminClerkUser();
+  if (!isAdmin) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
-  if (!adminEmail || !adminPassword) {
+  const adminPassword = (process.env.ADMIN_PASSWORD ?? "").trim();
+  if (!adminPassword) {
     return NextResponse.json({ error: "Admin not configured" }, { status: 500 });
   }
 
-  const { email, password } = await req.json();
-
-  if (
-    (email ?? "").trim().toLowerCase() !== adminEmail ||
-    (password ?? "") !== adminPassword
-  ) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+  const { password } = await req.json();
+  if ((password ?? "") !== adminPassword) {
+    return NextResponse.json({ error: "Invalid password" }, { status: 401 });
   }
 
   const token = computeAdminToken();

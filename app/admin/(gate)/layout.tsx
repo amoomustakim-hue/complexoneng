@@ -1,13 +1,16 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { isAdminCookieValid } from "@/lib/admin-auth";
+import { isAdminCookieValid, isAdminClerkUser } from "@/lib/admin-auth";
 import AdminSignOutButton from "@/components/admin/AdminSignOutButton";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const isAdmin = await isAdminClerkUser();
+  if (!isAdmin) redirect("/home");
+
   if (!isAdminCookieValid()) redirect("/admin/login");
 
   return (
