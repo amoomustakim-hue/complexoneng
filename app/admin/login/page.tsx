@@ -6,7 +6,7 @@ export default async function AdminLoginPage() {
   const isAdmin = await isAdminClerkUser();
   if (!isAdmin) redirect("/home");
 
-  const valid = await isAdminCookieValid();
+  const valid = isAdminCookieValid();
   if (valid) redirect("/admin");
 
   return (
