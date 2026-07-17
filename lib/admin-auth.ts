@@ -23,6 +23,8 @@ export async function isAdminClerkUser(): Promise<boolean> {
   const adminEmail = (process.env.ADMIN_EMAIL ?? "").toLowerCase().trim();
   if (!adminEmail) return false;
   const user = await currentUser();
-  const email = user?.emailAddresses[0]?.emailAddress?.toLowerCase() ?? "";
-  return email === adminEmail;
+  if (!user) return false;
+  return user.emailAddresses.some(
+    (e) => e.emailAddress.toLowerCase() === adminEmail
+  );
 }
