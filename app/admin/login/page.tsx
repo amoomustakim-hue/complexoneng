@@ -1,13 +1,9 @@
 import { redirect } from "next/navigation";
-import { isAdminCookieValid, isAdminClerkUser } from "@/lib/admin-auth";
+import { isAdminCookieValid } from "@/lib/admin-auth";
 import AdminLoginForm from "@/components/admin/AdminLoginForm";
 
-export default async function AdminLoginPage() {
-  const isAdmin = await isAdminClerkUser();
-  if (!isAdmin) redirect("/home");
-
-  const valid = isAdminCookieValid();
-  if (valid) redirect("/admin");
+export default function AdminLoginPage() {
+  if (isAdminCookieValid()) redirect("/admin");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream">

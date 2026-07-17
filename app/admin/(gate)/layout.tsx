@@ -1,18 +1,14 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { isAdminCookieValid, isAdminClerkUser } from "@/lib/admin-auth";
+import { isAdminCookieValid } from "@/lib/admin-auth";
 import AdminSignOutButton from "@/components/admin/AdminSignOutButton";
 
-export default async function AdminLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const isAdmin = await isAdminClerkUser();
-  if (!isAdmin) redirect("/home");
-
-  const valid = isAdminCookieValid();
-  if (!valid) redirect("/admin/login");
+  if (!isAdminCookieValid()) redirect("/admin/login");
 
   return (
     <div className="min-h-screen bg-cream">
