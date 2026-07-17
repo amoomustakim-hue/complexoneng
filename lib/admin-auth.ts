@@ -26,18 +26,35 @@ export function isAdminCookieValid(): boolean {
 }
 
 // Check the signed-in Clerk user's email against ADMIN_EMAIL using the DB.
-// Avoids calling Clerk's currentUser() API (which can return null in production).
+// Falls back to email lookup + userId migration to handle Clerk dev→prod mismatch.
 export async function isAdminClerkUser(): Promise<boolean> {
   const { userId } = await auth();
   if (!userId) return false;
   const adminEmail = getAdminEmail();
   if (!adminEmail) return false;
 
-  const profile = await prisma.profile.findUnique({
+  // Fast path: profile already linked to this Clerk userId
+  const byId = await prisma.profile.findUnique({
     where: { clerkUserId: userId },
     select: { email: true },
   });
+  if (byId) return byId.email.toLowerCase() === adminEmail;
 
-  if (!profile?.email) return false;
-  return profile.email.toLowerCase() === adminEmail;
+  // Fallback: look up the admin profile by email (handles dev→prod userId mismatch).
+  // If found, re-link it to the current production userId.
+  const byEmail = await prisma.profile.findUnique({
+    where: { email: adminEmail },
+    select: { clerkUserId: true },
+  });
+  if (byEmail) {
+    try {
+      await prisma.profile.update({
+        where: { email: adminEmail },
+        data: { clerkUserId: userId },
+      });
+    } catch { /* non-fatal — will succeed on next request */ }
+    return true;
+  }
+
+  return false;
 }
