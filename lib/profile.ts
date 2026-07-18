@@ -19,15 +19,14 @@ export async function getOrCreateProfile() {
   const user = await currentUser();
   const email = user?.emailAddresses[0]?.emailAddress ?? "";
 
-  // Handle dev→prod migration: same email, different Clerk userId (different environments)
-  // Clerk Dev and Clerk Prod generate different user IDs for the same account.
-  // If a profile with this email already exists, re-link it to the production userId.
+  // If a profile with this email exists but a different clerkUserId (e.g. the Clerk account was
+  // deleted and re-created), re-link it and reset onboarded so the user goes through setup again.
   if (email) {
-    const byEmail = await prisma.profile.findUnique({ where: { email } });
-    if (byEmail) {
+    const orphaned = await prisma.profile.findUnique({ where: { email } });
+    if (orphaned) {
       return prisma.profile.update({
         where: { email },
-        data: { clerkUserId: userId },
+        data: { clerkUserId: userId, onboarded: false },
       });
     }
   }

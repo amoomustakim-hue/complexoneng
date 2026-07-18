@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { PlayCircle, FileText, CheckCircle2, Circle, Award } from "lucide-react";
+import { PlayCircle, FileText, CheckCircle2, Circle, Award, Star } from "lucide-react";
 import { getCurrentProfile } from "@/lib/profile";
 import { prisma } from "@/lib/prisma";
 import { checkAndIssueCertificate } from "@/lib/certificate";
@@ -8,7 +8,23 @@ import MarkCompleteButton from "@/components/academic/MarkCompleteButton";
 import EnrollButton from "@/components/academic/EnrollButton";
 import CourseReviewForm from "@/components/academic/CourseReviewForm";
 import LessonSidePanel from "@/components/academic/LessonSidePanel";
+import LessonAskAI from "@/components/academic/LessonAskAI";
 import { getOrCreateCoachSession } from "@/lib/coach";
+
+function toEmbedUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    if (u.pathname.startsWith("/embed/")) return url;
+    if (u.hostname === "youtu.be") {
+      return `https://www.youtube-nocookie.com/embed${u.pathname}`;
+    }
+    const v = u.searchParams.get("v");
+    if (v) return `https://www.youtube-nocookie.com/embed/${v}`;
+    return url;
+  } catch {
+    return url;
+  }
+}
 
 export default async function CoursePlayerPage({
   params,
@@ -62,9 +78,16 @@ export default async function CoursePlayerPage({
   const certificate = enrollment
     ? await checkAndIssueCertificate(profile.id, course.id)
     : null;
-  const review = await prisma.courseReview.findUnique({
-    where: { profileId_courseId: { profileId: profile.id, courseId: course.id } },
-  });
+  const [review, allReviews] = await Promise.all([
+    prisma.courseReview.findUnique({
+      where: { profileId_courseId: { profileId: profile.id, courseId: course.id } },
+    }),
+    prisma.courseReview.findMany({
+      where: { courseId: course.id },
+      include: { profile: { select: { fullName: true, avatarUrl: true } } },
+      orderBy: { updatedAt: "desc" },
+    }),
+  ]);
 
   const [aiSession, note, questions] = await Promise.all([
     getOrCreateCoachSession(profile.id, `lesson:${currentLesson.id}`),
@@ -126,10 +149,11 @@ export default async function CoursePlayerPage({
         <h2 className="text-2xl font-bold text-teal mt-1">{currentLesson.title}</h2>
 
         {currentLesson.videoUrl ? (
-          <div className="aspect-video bg-teal-deep rounded-xl mt-4 flex items-center justify-center">
+          <div className="aspect-video bg-teal-deep rounded-xl mt-4 overflow-hidden">
             <iframe
-              src={currentLesson.videoUrl}
-              className="w-full h-full rounded-xl"
+              src={toEmbedUrl(currentLesson.videoUrl)}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               title={currentLesson.title}
             />
@@ -140,6 +164,11 @@ export default async function CoursePlayerPage({
             <p className="text-sm text-muted">Video coming soon — your instructor hasn&apos;t uploaded one yet.</p>
           </div>
         )}
+
+        <LessonAskAI
+          lessonId={currentLesson.id}
+          initialMessages={(aiSession.messages as { role: "user" | "model"; content: string }[]) ?? []}
+        />
 
         <div className="flex items-start gap-2 mt-6">
           <FileText className="text-teal shrink-0 mt-0.5" size={16} />
@@ -220,10 +249,34 @@ export default async function CoursePlayerPage({
           </div>
         )}
 
+        {allReviews.length > 0 && (
+          <div className="mt-6">
+            <p className="text-xs tracking-widest text-muted mb-3">STUDENT REVIEWS ({allReviews.length})</p>
+            <div className="flex flex-col gap-3">
+              {allReviews.map((r) => (
+                <div key={r.id} className="rounded-xl border border-border-light bg-white p-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-teal">
+                      {r.profile.fullName ?? "Anonymous"}
+                    </p>
+                    <div className="flex gap-0.5">
+                      {[1,2,3,4,5].map((n) => (
+                        <Star key={n} size={13} className={n <= r.rating ? "text-lime fill-lime" : "text-border-light"} />
+                      ))}
+                    </div>
+                  </div>
+                  {r.comment && (
+                    <p className="text-sm text-muted mt-1 leading-relaxed">{r.comment}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <LessonSidePanel
           lessonId={currentLesson.id}
           currentProfileId={profile.id}
-          initialAiMessages={(aiSession.messages as { role: "user" | "model"; content: string }[]) ?? []}
           initialNoteContent={note?.content ?? ""}
           initialQuestions={questions.map((q) => ({
             id: q.id,

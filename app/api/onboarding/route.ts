@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       level: level as never,
       school: school?.trim() || null,
       targetExam: track === "HIGH_SCHOOL" ? (targetExam as never) : null,
-      courseOfStudy: track === "UNDERGRAD" ? courseOfStudy?.trim() || null : null,
+      courseOfStudy: (track === "UNDERGRAD" || (track === "HIGH_SCHOOL" && level === "JAMB")) ? courseOfStudy?.trim() || null : null,
       researchArea: track === "RESEARCHER" ? researchArea?.trim() || null : null,
       researchStage: track === "RESEARCHER" ? researchStage?.trim() || null : null,
       onboarded: true,

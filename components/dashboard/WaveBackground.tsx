@@ -23,7 +23,7 @@ export default function WaveBackground() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, transparent 0%, transparent 45%, rgba(15,43,107,0.05) 65%, rgba(15,43,107,0.14) 85%, rgba(7,21,64,0.22) 100%)",
+            "linear-gradient(to bottom, transparent 0%, transparent 20%, rgba(15,43,107,0.15) 45%, rgba(15,43,107,0.42) 70%, rgba(7,21,64,0.70) 100%)",
         }}
       />
 
@@ -50,7 +50,7 @@ export default function WaveBackground() {
           height="100%"
           filter="url(#grain)"
           style={{ mixBlendMode: "overlay" } as React.CSSProperties}
-          opacity="0.28"
+          opacity="0.42"
         />
       </svg>
 

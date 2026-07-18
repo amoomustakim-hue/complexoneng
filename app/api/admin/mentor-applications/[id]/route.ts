@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminProfile } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { sendMentorRejectionEmail, sendMentorApprovalEmail } from "@/lib/email";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const admin = await requireAdminProfile();
@@ -31,8 +32,15 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         mentorExpertise: application.expertise,
       },
     });
+    await sendMentorApprovalEmail(application.email, application.fullName).catch(() => {});
+  } else if (status === "REJECTED") {
+    await prisma.profile.updateMany({
+      where: { email: application.email },
+      data: { isMentor: false },
+    });
+    await sendMentorRejectionEmail(application.email, application.fullName).catch(() => {});
   } else {
-    // REJECTED or reset to PENDING — revoke mentor status
+    // reset to PENDING — revoke mentor status, no email
     await prisma.profile.updateMany({
       where: { email: application.email },
       data: { isMentor: false },

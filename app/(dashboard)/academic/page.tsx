@@ -110,6 +110,41 @@ export default async function AcademicDashboardPage() {
         </div>
       </div>
 
+      {/* UTME Prep Hub — JAMB candidates only */}
+      {profile.level === "JAMB" && (
+        <div>
+          <p className="text-xs tracking-widest text-muted mb-3">UTME PREP HUB</p>
+          <div className="rounded-2xl bg-teal p-6 flex flex-col sm:flex-row sm:items-center gap-5">
+            <div className="flex-1">
+              <p className="text-xs tracking-widest text-cream/60 mb-1">JAMB CANDIDATE</p>
+              <h2 className="text-lg font-bold text-cream">Ready to crush your UTME?</h2>
+              {profile.courseOfStudy && (
+                <p className="text-sm text-cream/70 mt-1">
+                  Subjects: {profile.courseOfStudy}
+                </p>
+              )}
+              <p className="text-sm text-cream/60 mt-1">
+                Practice timed CBT questions by subject — same format as the real exam.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3 shrink-0">
+              <Link
+                href="/academic/cbt"
+                className="bg-white text-teal text-sm font-bold px-5 py-2.5 rounded-xl hover:opacity-90 transition"
+              >
+                Start CBT Practice
+              </Link>
+              <Link
+                href="/academic/coach"
+                className="bg-teal-light/40 border border-cream/20 text-cream text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-teal-light/60 transition"
+              >
+                Ask AI Coach
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Feature cards */}
       <div>
         <p className="text-xs tracking-widest text-muted mb-3">QUICK ACCESS</p>

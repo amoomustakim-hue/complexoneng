@@ -6,6 +6,7 @@ import "@fontsource/instrument-serif/400.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import WaveBackground from "@/components/dashboard/WaveBackground";
 
 export const metadata: Metadata = {
   title: "ComplexOne — One platform. Every student journey.",
@@ -31,8 +32,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className="font-[family-name:var(--font-jakarta)] antialiased">
-          {children}
+        <body className="font-[family-name:var(--font-jakarta)] antialiased bg-cream">
+          <WaveBackground />
+          <div className="relative z-10 min-h-screen">
+            {children}
+          </div>
         </body>
       </html>
     </ClerkProvider>

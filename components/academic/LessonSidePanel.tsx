@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import CoachChat from "@/components/coach/CoachChat";
 import LessonNotes from "@/components/academic/LessonNotes";
 import LessonQA from "@/components/academic/LessonQA";
 
-type ChatMessage = { role: "user" | "model"; content: string };
 type Answer = {
   id: string;
   content: string;
@@ -23,23 +21,21 @@ type Question = {
 export default function LessonSidePanel({
   lessonId,
   currentProfileId,
-  initialAiMessages,
   initialNoteContent,
   initialQuestions,
 }: {
   lessonId: string;
   currentProfileId: string;
-  initialAiMessages: ChatMessage[];
+  initialAiMessages?: unknown[];
   initialNoteContent: string;
   initialQuestions: Question[];
 }) {
-  const [tab, setTab] = useState<"ai" | "notes" | "qa">("ai");
+  const [tab, setTab] = useState<"notes" | "qa">("notes");
 
   return (
-    <div className="rounded-xl border border-border-light bg-white mt-8 overflow-hidden">
+    <div className="rounded-xl border border-border-light bg-white mt-6 overflow-hidden">
       <div className="flex border-b border-border-light">
         {[
-          { key: "ai", label: "Ask AI" },
           { key: "notes", label: "My notes" },
           { key: "qa", label: "Q&A" },
         ].map((t) => (
@@ -53,16 +49,6 @@ export default function LessonSidePanel({
             {t.label}
           </button>
         ))}
-      </div>
-
-      <div className={tab === "ai" ? "" : "hidden"}>
-        <CoachChat
-          initialMessages={initialAiMessages}
-          endpoint={`/api/ai/lesson/${lessonId}`}
-          placeholder="Ask about this lesson..."
-          emptyHint="Ask anything about this specific lesson — concepts, examples, or anything confusing."
-          heightClassName="h-[28rem]"
-        />
       </div>
 
       {tab === "notes" && (

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { PlayCircle, FileText as FileTextIcon } from "lucide-react";
+import { useRef, useState } from "react";
+import { PlayCircle, FileText as FileTextIcon, Upload } from "lucide-react";
 
 type Lesson = {
   id: string;
@@ -54,6 +54,20 @@ export default function CourseDetailAdmin({
   const [lessonForm, setLessonForm] = useState<LessonFormState>(emptyLessonForm);
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [savingLesson, setSavingLesson] = useState(false);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const pdfInputRef = useRef<HTMLInputElement>(null);
+
+  async function handlePdfUpload(file: File) {
+    setUploadingPdf(true);
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+    setUploadingPdf(false);
+    if (res.ok) {
+      const data = await res.json();
+      setLessonForm((f) => ({ ...f, pdfUrl: data.url }));
+    }
+  }
 
   async function addModule(e: React.FormEvent) {
     e.preventDefault();
@@ -263,12 +277,41 @@ export default function CourseDetailAdmin({
                 placeholder="Video embed URL (e.g. https://www.youtube.com/embed/...)"
                 className="border border-border-light rounded-lg px-3 py-2 text-sm text-teal"
               />
-              <input
-                value={lessonForm.pdfUrl}
-                onChange={(e) => setLessonForm((f) => ({ ...f, pdfUrl: e.target.value }))}
-                placeholder="PDF URL"
-                className="border border-border-light rounded-lg px-3 py-2 text-sm text-teal"
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  ref={pdfInputRef}
+                  type="file"
+                  accept="application/pdf"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handlePdfUpload(file);
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => pdfInputRef.current?.click()}
+                  disabled={uploadingPdf}
+                  className="flex items-center gap-2 border border-border-light rounded-lg px-3 py-2 text-sm text-teal hover:border-teal transition disabled:opacity-50"
+                >
+                  <Upload size={14} />
+                  {uploadingPdf ? "Uploading…" : "Upload PDF"}
+                </button>
+                {lessonForm.pdfUrl && (
+                  <span className="text-xs text-teal truncate max-w-[200px]">
+                    ✓ PDF uploaded
+                  </span>
+                )}
+                {lessonForm.pdfUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setLessonForm((f) => ({ ...f, pdfUrl: "" }))}
+                    className="text-xs text-red-500"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => saveLesson(module_.id)}

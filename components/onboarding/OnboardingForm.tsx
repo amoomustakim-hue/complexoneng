@@ -91,6 +91,7 @@ export default function OnboardingForm() {
   function selectTrack(t: Track) {
     setTrack(t);
     setLevel(t === "RESEARCHER" ? "POSTGRAD" : "");
+    setTargetExam("");
     setStep("details");
   }
 
@@ -252,7 +253,11 @@ export default function OnboardingForm() {
             id="level"
             required
             value={level}
-            onChange={(e) => setLevel(e.target.value)}
+            onChange={(e) => {
+              setLevel(e.target.value);
+              if (e.target.value === "JAMB") setTargetExam("JAMB");
+              else setTargetExam("");
+            }}
             className={inputClass}
           >
             <option value="" disabled>
@@ -267,21 +272,39 @@ export default function OnboardingForm() {
         </div>
       )}
 
-      <div>
-        <label className="text-sm font-medium text-teal" htmlFor="school">
-          School (optional)
-        </label>
-        <input
-          id="school"
-          type="text"
-          value={school}
-          onChange={(e) => setSchool(e.target.value)}
-          placeholder="e.g. UNILAG"
-          className={inputClass}
-        />
-      </div>
+      {/* JAMB candidates: course combination instead of school */}
+      {track === "HIGH_SCHOOL" && level === "JAMB" ? (
+        <div>
+          <label className="text-sm font-medium text-teal" htmlFor="courseOfStudy">
+            Course combination
+          </label>
+          <input
+            id="courseOfStudy"
+            type="text"
+            value={courseOfStudy}
+            onChange={(e) => setCourseOfStudy(e.target.value)}
+            placeholder="e.g. Physics, Chemistry, Biology, Mathematics"
+            className={inputClass}
+          />
+          <p className="text-xs text-muted mt-1">The 4 subjects you're sitting for in JAMB</p>
+        </div>
+      ) : (
+        <div>
+          <label className="text-sm font-medium text-teal" htmlFor="school">
+            School (optional)
+          </label>
+          <input
+            id="school"
+            type="text"
+            value={school}
+            onChange={(e) => setSchool(e.target.value)}
+            placeholder={track === "HIGH_SCHOOL" ? "e.g. Kings College Lagos" : "e.g. UNILAG"}
+            className={inputClass}
+          />
+        </div>
+      )}
 
-      {track === "HIGH_SCHOOL" && (
+      {track === "HIGH_SCHOOL" && level !== "JAMB" && (
         <div>
           <label className="text-sm font-medium text-teal" htmlFor="targetExam">
             Target exam

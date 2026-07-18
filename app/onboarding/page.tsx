@@ -14,7 +14,7 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-16">
+    <div className="min-h-screen flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md bg-white border border-border-light rounded-xl p-8">
         <p className="text-xs tracking-widest text-teal">GET STARTED</p>
         <h1 className="text-2xl font-bold text-teal mt-2">Tell us about yourself</h1>

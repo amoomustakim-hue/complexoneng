@@ -14,7 +14,7 @@ export default async function AdminLayout({
   if (!isAdminCookieValid()) redirect("/admin/login");
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen">
       <header className="border-b border-border-light bg-white px-6 py-3 flex items-center justify-between">
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
           <Link href="/admin" className="text-sm font-bold text-teal shrink-0">
