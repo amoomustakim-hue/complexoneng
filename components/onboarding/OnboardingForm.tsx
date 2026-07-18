@@ -153,11 +153,8 @@ export default function OnboardingForm() {
           >
             <div className="w-24 h-24 rounded-full bg-border-light overflow-hidden flex items-center justify-center border-2 border-dashed border-teal/30 hover:border-teal transition-colors">
               {avatarPreview ? (
-                <img
-                  src={avatarPreview}
-                  alt="Avatar preview"
-                  className="w-full h-full object-cover"
-                />
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
               ) : (
                 <User size={36} className="text-muted" />
               )}
@@ -286,7 +283,7 @@ export default function OnboardingForm() {
             placeholder="e.g. Physics, Chemistry, Biology, Mathematics"
             className={inputClass}
           />
-          <p className="text-xs text-muted mt-1">The 4 subjects you're sitting for in JAMB</p>
+          <p className="text-xs text-muted mt-1">The 4 subjects you&apos;re sitting for in JAMB</p>
         </div>
       ) : (
         <div>
