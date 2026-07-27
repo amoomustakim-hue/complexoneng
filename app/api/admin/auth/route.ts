@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { computeAdminToken, isAdminClerkUser } from "@/lib/admin-auth";
+import { createAdminSession, isAdminClerkUser } from "@/lib/admin-auth";
 
 export async function POST(req: Request) {
   const isAdmin = await isAdminClerkUser();
@@ -17,13 +17,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid password" }, { status: 401 });
   }
 
-  const token = computeAdminToken();
+  const token = createAdminSession();
   const res = NextResponse.json({ ok: true });
   res.cookies.set("admin_session", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 60 * 8, // matches SESSION_MAX_SECS in admin-auth.ts
     path: "/",
   });
   return res;
