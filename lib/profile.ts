@@ -1,11 +1,32 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { getRedis } from "@/lib/redis";
+
+const PROFILE_TTL = 300; // 5 minutes
 
 export async function getCurrentProfile() {
   const { userId } = await auth();
   if (!userId) return null;
 
-  return prisma.profile.findUnique({ where: { clerkUserId: userId } });
+  const redis = getRedis();
+  const cacheKey = `profile:${userId}`;
+
+  if (redis) {
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) return cached as Awaited<ReturnType<typeof prisma.profile.findUnique>>;
+    } catch {}
+  }
+
+  const profile = await prisma.profile.findUnique({ where: { clerkUserId: userId } });
+
+  if (profile && redis) {
+    try {
+      await redis.set(cacheKey, profile, { ex: PROFILE_TTL });
+    } catch {}
+  }
+
+  return profile;
 }
 
 export async function getOrCreateProfile() {

@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateCoachSession } from "@/lib/coach";
 import { getLessonHelperModel } from "@/lib/gemini";
+import { getAiRatelimit } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
 
@@ -11,6 +12,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { userId } = await auth();
   if (!userId) {
     return new Response("Unauthorized", { status: 401 });
+  }
+
+  const limiter = getAiRatelimit();
+  if (limiter) {
+    const { success, reset } = await limiter.limit(userId);
+    if (!success) {
+      return new Response("Too many requests. Try again in a minute.", {
+        status: 429,
+        headers: { "Retry-After": String(Math.ceil((reset - Date.now()) / 1000)) },
+      });
+    }
   }
 
   const profile = await prisma.profile.findUnique({ where: { clerkUserId: userId } });
